@@ -1,30 +1,55 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
+using UnityEditor.Purchasing;
 using UnityEngine;
 
-public class UiRunnerOneScreen : IUiRunner
+public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
 {
     private ServerGameEngine _serverGameEngine;
-    private GameObject player1TextUi;
-    private GameObject player2TextUi;
     
+    public GameObject player1HierarchyParent;
+    public GameObject player2HierarchyParent;
+    
+    public GameObject monsterTextUiPrefab;
+
     private PlayerBoard uiPlayer1Board;
     private PlayerBoard uiPlayer2Board;
+    
+    private Dictionary<int, GameObject> _monsterIdToTextDisplay = new Dictionary<int, GameObject>();
+    
+    
 
-    public UiRunnerOneScreen(ServerGameEngine serverGameEngine)
+    public void OnEngineStart(ServerGameEngine serverGameEngine, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
         _serverGameEngine = serverGameEngine;
-        player1TextUi = GameObject.Find("Player1 Text Ui");
-        player2TextUi = GameObject.Find("Player2 Text Ui");
+        initalizeAllMonsterUi(playerBoard1, playerBoard2);
+        ShowBoardState(playerBoard1, playerBoard2);
     }
+    
 
     public void ShowBoardState(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
         uiPlayer1Board = playerBoard1;
         uiPlayer2Board = playerBoard2;
         
-        player1TextUi.GetComponent<TMP_Text>().text = PlayerBoardToText(uiPlayer1Board);
-        player2TextUi.GetComponent<TMP_Text>().text = PlayerBoardToText(uiPlayer2Board);
+        playerBoard1.GetMonsters().Concat(playerBoard2.GetMonsters()).ToList().ForEach(monster =>
+        {
+            _monsterIdToTextDisplay[monster.GetId()].GetComponent<TMP_Text>().text = MonsterToText(monster);
+        });
+    }
+
+    private void initalizeAllMonsterUi(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    {
+        playerBoard1.GetMonsters().ForEach(monster=>{initalizeMonsterUi(monster, player1HierarchyParent);});
+        playerBoard2.GetMonsters().ForEach(monster=>{initalizeMonsterUi(monster, player2HierarchyParent);});
+    }
+
+    private void initalizeMonsterUi(Monster monster, GameObject parent)
+    {
+        GameObject monsterTextUi = Instantiate(monsterTextUiPrefab, parent.transform);
+        monsterTextUi.GetComponent<TMP_Text>().text = MonsterToText(monster);
+        _monsterIdToTextDisplay.Add(monster.GetId(), monsterTextUi);
     }
 
     public void UpdateBoardState(List<PlayerActionResult> actionResults, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
@@ -40,19 +65,7 @@ public class UiRunnerOneScreen : IUiRunner
         player1Actions.Add(new PlayerAction(TestUtils.GetRandomMonsterId(uiPlayer1Board), TestUtils.GetRandomMonsterId(uiPlayer2Board), ActionEnum.Attack));
         player2Actions.Add(new PlayerAction(TestUtils.GetRandomMonsterId(uiPlayer2Board), TestUtils.GetRandomMonsterId(uiPlayer1Board), ActionEnum.Attack));
 
-        _serverGameEngine.RecievePlayerActions(player1Actions, player2Actions);
-    }
-
-    private string PlayerBoardToText(PlayerBoard playerBoard)
-    {
-        string text = "";
-
-        foreach (Monster monster in playerBoard.GetMonsters())
-        {
-            text += MonsterToText(monster) + "\n";
-        }
-
-        return text;
+        _serverGameEngine.ReceivePlayerActions(player1Actions, player2Actions);
     }
 
     private string MonsterToText(Monster monster)
@@ -67,6 +80,7 @@ public class UiRunnerOneScreen : IUiRunner
 
 public interface IUiRunner
 {
+    public void OnEngineStart(ServerGameEngine serverGameEngine, PlayerBoard playerBoard1, PlayerBoard playerBoard2);
     public void ShowBoardState(PlayerBoard playerBoard1, PlayerBoard playerBoard2);
     public void UpdateBoardState(List<PlayerActionResult> actionResults, PlayerBoard playerBoard1, PlayerBoard playerBoard2);
     

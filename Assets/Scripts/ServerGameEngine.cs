@@ -15,17 +15,19 @@ public class ServerGameEngine : MonoBehaviour
 
     void Start()
     {
-        _uiRunner = new UiRunnerOneScreen(this);
+        
+        GameObject canvas = GameObject.Find("Canvas");
+        _uiRunner = canvas.GetComponent<UiRunnerOneScreen>();
         GlobalVariables.UiRunner = _uiRunner;
 
-        
         _player1 = new PlayerBoard(TestUtils.CreateHunter(), TestUtils.CreateMonsters());
         _player2 = new PlayerBoard(TestUtils.CreateHunter(), TestUtils.CreateMonsters());
         
+        _uiRunner.OnEngineStart(this, _player1, _player2);
         _uiRunner.ShowBoardState(_player1, _player2);
     }
     
-    public void RecievePlayerActions(List<PlayerAction> player1Actions, List<PlayerAction> player2Actions)
+    public void ReceivePlayerActions(List<PlayerAction> player1Actions, List<PlayerAction> player2Actions)
     {
         Debug.Log("RecievePlayerActions() was called!");
         _player1Actions = player1Actions;
