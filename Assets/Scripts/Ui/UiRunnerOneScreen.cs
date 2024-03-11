@@ -18,6 +18,7 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
     private PlayerBoard uiPlayer2Board;
     
     private Dictionary<int, GameObject> _monsterIdToTextDisplay = new Dictionary<int, GameObject>();
+    private Dictionary<GameObject, int> _textDisplayToMonsterId = new Dictionary<GameObject, int>();
     
     public void OnEngineStart(ServerGameEngine serverGameEngine, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
@@ -33,7 +34,7 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
         
         playerBoard1.GetMonsters().Concat(playerBoard2.GetMonsters()).ToList().ForEach(monster =>
         {
-            _monsterIdToTextDisplay[monster.GetId()].GetComponent<TMP_Text>().text = MonsterToText(monster);
+            _monsterIdToTextDisplay[monster.GetId()].GetComponentInChildren<TMP_Text>().text = MonsterToText(monster);
         });
     }
 
@@ -46,15 +47,23 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
     private void initalizeMonsterUi(Monster monster, GameObject parent)
     {
         GameObject monsterTextUi = Instantiate(monsterTextUiPrefab, parent.transform);
-        monsterTextUi.GetComponent<TMP_Text>().text = MonsterToText(monster);
+        monsterTextUi.name = monster.GetId() + "-" + monster.GetName();
+        monsterTextUi.GetComponentInChildren<TMP_Text>().text = MonsterToText(monster);
         _monsterIdToTextDisplay.Add(monster.GetId(), monsterTextUi);
+        _textDisplayToMonsterId.Add(monsterTextUi, monster.GetId());
     }
 
     public void UpdateBoardState(List<PlayerActionResult> actionResults, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
         AsyncUtils.ForgetAndLog(UpdateBoardWithAnimations(actionResults, playerBoard1, playerBoard2));
     }
-    
+
+    public void MonsterClicked(GameObject monsterTextUi)
+    {
+        int monsterId = _textDisplayToMonsterId[monsterTextUi];
+        Debug.Log("Monster clicked: " + monsterId);
+    }
+
     private async Task UpdateBoardWithAnimations(List<PlayerActionResult> actionResults, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
         foreach (PlayerActionResult actionResult in actionResults)
@@ -68,7 +77,7 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
             HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().targetId], false);
             await Task.Delay(1000);
         }
-        
+
         ShowBoardState(playerBoard1, playerBoard2);
     }
 
@@ -97,6 +106,8 @@ public interface IUiRunner
     public void OnEngineStart(ServerGameEngine serverGameEngine, PlayerBoard playerBoard1, PlayerBoard playerBoard2);
     public void ShowBoardState(PlayerBoard playerBoard1, PlayerBoard playerBoard2);
     public void UpdateBoardState(List<PlayerActionResult> actionResults, PlayerBoard playerBoard1, PlayerBoard playerBoard2);
+    
+    public void MonsterClicked(GameObject monsterTextUi);
     
     public void EndTurn();
 }

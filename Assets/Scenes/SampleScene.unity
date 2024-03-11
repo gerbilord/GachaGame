@@ -403,7 +403,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2.2679138, y: 5.586212}
+  m_AnchoredPosition: {x: -2.2679138, y: 5.5861816}
   m_SizeDelta: {x: -97.1749, y: -90.449}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1676744056
@@ -489,7 +489,6 @@ GameObject:
   - component: {fileID: 1977464225}
   - component: {fileID: 1977464224}
   - component: {fileID: 1977464228}
-  - component: {fileID: 1977464229}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -594,19 +593,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player1HierarchyParent: {fileID: 2000818801}
   player2HierarchyParent: {fileID: 1676744054}
-  monsterTextUiPrefab: {fileID: 5502380645350045996, guid: 46b64710c47c7bb44a842b06c86edca5, type: 3}
---- !u!114 &1977464229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1977464223}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 153b131def2f4dbb97def14ed7130a03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  monsterTextUiPrefab: {fileID: 2403540313649125407, guid: 46b64710c47c7bb44a842b06c86edca5, type: 3}
 --- !u!1 &2000818801
 GameObject:
   m_ObjectHideFlags: 0
