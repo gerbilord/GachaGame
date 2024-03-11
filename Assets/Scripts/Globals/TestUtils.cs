@@ -6,7 +6,7 @@ public static class TestUtils
     private static int _id = 0;
     public static Hunter CreateHunter()
     {
-        return new Hunter(); // TODO give the hunter a passive
+        return new Hunter(null); // TODO give the hunter a passive
     }
 
     private static Monster CreateDemon()

@@ -35,6 +35,12 @@ public class Monster
         _spell = spell;
         _statuses = new List<IStatus>();
     }
+    
+    public Monster DeepCopy()
+    {
+        return new Monster(_id, _name, _attack, _health, _armor, _resist, _special1, _special2, _mana, _magic, _passive, _spell);
+    }
+    
 
     public int GetId()
     {

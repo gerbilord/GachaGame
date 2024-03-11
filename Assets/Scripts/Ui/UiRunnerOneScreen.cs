@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEditor.Purchasing;
 using UnityEngine;
@@ -18,15 +19,12 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
     
     private Dictionary<int, GameObject> _monsterIdToTextDisplay = new Dictionary<int, GameObject>();
     
-    
-
     public void OnEngineStart(ServerGameEngine serverGameEngine, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
         _serverGameEngine = serverGameEngine;
         initalizeAllMonsterUi(playerBoard1, playerBoard2);
         ShowBoardState(playerBoard1, playerBoard2);
     }
-    
 
     public void ShowBoardState(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
@@ -54,12 +52,28 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
 
     public void UpdateBoardState(List<PlayerActionResult> actionResults, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
+        AsyncUtils.ForgetAndLog(UpdateBoardWithAnimations(actionResults, playerBoard1, playerBoard2));
+    }
+    
+    private async Task UpdateBoardWithAnimations(List<PlayerActionResult> actionResults, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    {
+        foreach (PlayerActionResult actionResult in actionResults)
+        {
+            HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().monsterId], true);
+            await Task.Delay(1000);
+            HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().targetId], true);
+            await Task.Delay(1000);
+            ShowBoardState(actionResult.GetPlayer1BoardSnapshot(), actionResult.GetPlayer2BoardSnapshot());
+            HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().monsterId], false);
+            HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().targetId], false);
+            await Task.Delay(1000);
+        }
+        
         ShowBoardState(playerBoard1, playerBoard2);
     }
 
     public void EndTurn()
     {
-        Debug.Log("endturn was called!");
         List<PlayerAction> player1Actions = new List<PlayerAction>();
         List<PlayerAction> player2Actions = new List<PlayerAction>();
         player1Actions.Add(new PlayerAction(TestUtils.GetRandomMonsterId(uiPlayer1Board), TestUtils.GetRandomMonsterId(uiPlayer2Board), ActionEnum.Attack));
@@ -71,7 +85,7 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
     private string MonsterToText(Monster monster)
     {
         string text = "";
-        text += "Name: " + monster.GetName() + "\n";
+        text += monster.GetName() + "\n";
         text += "\t" + "Attack: " + monster.GetAttack() + "\n";
         text += "\t" + "Health: " + monster.GetHealth() + "\n";
         return text;

@@ -7,8 +7,8 @@ public class ServerGameEngine : MonoBehaviour
 {
     private IUiRunner _uiRunner;
 
-    private PlayerBoard _player1;
-    private PlayerBoard _player2;
+    private PlayerBoard _player1Board;
+    private PlayerBoard _player2Board;
     
     private List<PlayerAction> _player1Actions;
     private List<PlayerAction> _player2Actions;
@@ -20,22 +20,21 @@ public class ServerGameEngine : MonoBehaviour
         _uiRunner = canvas.GetComponent<UiRunnerOneScreen>();
         GlobalVariables.UiRunner = _uiRunner;
 
-        _player1 = new PlayerBoard(TestUtils.CreateHunter(), TestUtils.CreateMonsters());
-        _player2 = new PlayerBoard(TestUtils.CreateHunter(), TestUtils.CreateMonsters());
+        _player1Board = new PlayerBoard(TestUtils.CreateHunter(), TestUtils.CreateMonsters(), new());
+        _player2Board = new PlayerBoard(TestUtils.CreateHunter(), TestUtils.CreateMonsters(), new());
         
-        _uiRunner.OnEngineStart(this, _player1, _player2);
-        _uiRunner.ShowBoardState(_player1, _player2);
+        _uiRunner.OnEngineStart(this, _player1Board, _player2Board);
+        _uiRunner.ShowBoardState(_player1Board, _player2Board);
     }
     
     public void ReceivePlayerActions(List<PlayerAction> player1Actions, List<PlayerAction> player2Actions)
     {
-        Debug.Log("RecievePlayerActions() was called!");
         _player1Actions = player1Actions;
         _player2Actions = player2Actions;
 
         List<PlayerActionResult> actionResults = RunPlayerActions();
         
-        _uiRunner.UpdateBoardState(actionResults,_player1, _player2);
+        _uiRunner.UpdateBoardState(actionResults,_player1Board, _player2Board);
     }
 
     private List<PlayerActionResult> RunPlayerActions()
@@ -84,13 +83,13 @@ public class ServerGameEngine : MonoBehaviour
 
         int damage = attacker.GetAttack();
         target.TakeDamage(damage, null);
-        
-        return new PlayerActionResult(playerAction);
+
+        return new PlayerActionResult(playerAction, _player1Board.DeepCopy(), _player2Board.DeepCopy());
     }
 
     private Monster GetMonsterById(int id)
     {
-        return _player1.GetMonsters().Find(monster => monster.GetId() == id) 
-               ?? _player2.GetMonsters().Find(monster => monster.GetId() == id);
+        return _player1Board.GetMonsters().Find(monster => monster.GetId() == id) 
+               ?? _player2Board.GetMonsters().Find(monster => monster.GetId() == id);
     }
 }
