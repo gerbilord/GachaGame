@@ -44,13 +44,13 @@ public class ServerGameEngine : MonoBehaviour
         for (int i = 0; i < _player1Actions.Count; i++)
         {
             PlayerAction player1Action = _player1Actions[i];
-            PlayerAction player2Action = _player2Actions[i];
+            // PlayerAction player2Action = _player2Actions[i];
             
             PlayerActionResult player1Result = RunPlayerAction(player1Action);
-            PlayerActionResult player2Result = RunPlayerAction(player2Action);
+            // PlayerActionResult player2Result = RunPlayerAction(player2Action);
             
             actionResults.Add(player1Result);
-            actionResults.Add(player2Result);
+            // actionResults.Add(player2Result);
         }
 
         return actionResults;
@@ -58,23 +58,10 @@ public class ServerGameEngine : MonoBehaviour
 
     private PlayerActionResult RunPlayerAction(PlayerAction playerAction)
     {
-        if (playerAction.actionEnum == ActionEnum.Attack)
-        {
-            return RunAttackAction(playerAction);
-        }
-        else if (playerAction.actionEnum == ActionEnum.Spell)
-        {
-            return RunCastSpellAction(playerAction);
-        }
-
-        Debug.Log("WARNING: Unhandled action type: " + playerAction.actionEnum);
-        throw new System.NotImplementedException();
+        playerAction.spell.Cast(GetMonsterById(playerAction.monsterId), GetMonsterById(playerAction.targetId), _player1Board, _player2Board);
+        return new PlayerActionResult(playerAction, _player1Board.DeepCopy(), _player2Board.DeepCopy());
     }
-
-    private PlayerActionResult RunCastSpellAction(PlayerAction playerAction)
-    {
-        throw new System.NotImplementedException();
-    }
+    
 
     private PlayerActionResult RunAttackAction(PlayerAction playerAction)
     {
@@ -89,6 +76,9 @@ public class ServerGameEngine : MonoBehaviour
 
     private Monster GetMonsterById(int id)
     {
+        if(id == -1)
+            return null;
+
         return _player1Board.GetMonsters().Find(monster => monster.GetId() == id) 
                ?? _player2Board.GetMonsters().Find(monster => monster.GetId() == id);
     }

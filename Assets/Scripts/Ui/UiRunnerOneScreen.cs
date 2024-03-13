@@ -9,9 +9,13 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
 {
     private ServerGameEngine _serverGameEngine;
     
+    public IAltUiRunner altUiRunner { get; set; }
+
     public GameObject player1HierarchyParent;
     public GameObject player2HierarchyParent;
     
+    public GameObject MenuGameObject;
+
     public GameObject monsterTextUiPrefab;
 
     private PlayerBoard uiPlayer1Board;
@@ -19,6 +23,11 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
     
     private Dictionary<int, GameObject> _monsterIdToTextDisplay = new Dictionary<int, GameObject>();
     private Dictionary<GameObject, int> _textDisplayToMonsterId = new Dictionary<GameObject, int>();
+    
+    public GameObject GetMenuGameObject()
+    {
+        return MenuGameObject;
+    }
     
     public void OnEngineStart(ServerGameEngine serverGameEngine, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
@@ -61,7 +70,30 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
     public void MonsterClicked(GameObject monsterTextUi)
     {
         int monsterId = _textDisplayToMonsterId[monsterTextUi];
+        Monster monster = uiPlayer1Board.GetMonsters().Concat(uiPlayer2Board.GetMonsters()).ToList().Find(m => m.GetId() == monsterId);
         Debug.Log("Monster clicked: " + monsterId);
+        
+        if(altUiRunner != null)
+        {
+            altUiRunner.OnMonsterClicked(monster);
+            return;
+        }
+
+        AsyncUtils.ForgetAndLog(GetUserAction(monster));
+    }
+
+    public async Task GetUserAction(Monster monster)
+    {
+        PlayerAction playerAction = await UserInputUtils.GetPlayerAction(monster, uiPlayer1Board, uiPlayer2Board);
+        _serverGameEngine.ReceivePlayerActions(new List<PlayerAction>(){playerAction}, new());
+    }
+    
+    public void OptionClicked(GameObject option)
+    {
+        if(altUiRunner != null)
+        {
+            altUiRunner.OnOptionClicked(option);
+        }
     }
 
     private async Task UpdateBoardWithAnimations(List<PlayerActionResult> actionResults, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
@@ -70,17 +102,24 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
         {
             HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().monsterId], true);
             await Task.Delay(1000);
-            HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().targetId], true);
-            await Task.Delay(1000);
+            if (actionResult.GetPlayerAction().targetId != -1)
+            {
+                HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().targetId], true);
+                await Task.Delay(1000);
+            }
             ShowBoardState(actionResult.GetPlayer1BoardSnapshot(), actionResult.GetPlayer2BoardSnapshot());
             HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().monsterId], false);
-            HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().targetId], false);
+            if (actionResult.GetPlayerAction().targetId != -1)
+            {
+                HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().targetId], false);
+            }
             await Task.Delay(1000);
         }
 
         ShowBoardState(playerBoard1, playerBoard2);
     }
 
+    /**
     public void EndTurn()
     {
         List<PlayerAction> player1Actions = new List<PlayerAction>();
@@ -89,7 +128,7 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner
         player2Actions.Add(new PlayerAction(TestUtils.GetRandomMonsterId(uiPlayer2Board), TestUtils.GetRandomMonsterId(uiPlayer1Board), ActionEnum.Attack));
 
         _serverGameEngine.ReceivePlayerActions(player1Actions, player2Actions);
-    }
+    }**/
 
     private string MonsterToText(Monster monster)
     {
@@ -109,5 +148,10 @@ public interface IUiRunner
     
     public void MonsterClicked(GameObject monsterTextUi);
     
-    public void EndTurn();
+    public void OptionClicked(GameObject option);
+    // public void EndTurn();
+    
+    public IAltUiRunner altUiRunner { get; set; }
+    
+    public GameObject GetMenuGameObject();
 }

@@ -3,18 +3,12 @@ public class PlayerAction
     public int monsterId;
     public int targetId;
     
-    public ActionEnum actionEnum;
+    public ISpell spell;
     
-    public PlayerAction(int monsterId, int targetId, ActionEnum actionEnum)
+    public PlayerAction(int monsterId, int targetId, ISpell spell)
     {
         this.monsterId = monsterId;
         this.targetId = targetId;
-        this.actionEnum = actionEnum;
+        this.spell = spell;
     }
-}
-
-public enum ActionEnum
-{
-    Attack,
-    Spell,
 }

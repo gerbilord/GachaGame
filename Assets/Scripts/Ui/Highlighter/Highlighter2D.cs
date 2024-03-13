@@ -17,7 +17,8 @@ public class Highlighter2D : MonoBehaviour, IHighlighter
     private void Awake()
     {
         // get component raw image from child
-        overlay = GetComponentInChildren<RawImage>();
+        // The name is "overlay"
+        overlay = transform.Find("overlay").GetComponent<RawImage>();
     }
 
     public void ToggleHighlight(bool turnOn, Color highlightColor, float highlightIntensity)

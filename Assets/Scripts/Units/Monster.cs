@@ -14,12 +14,12 @@ public class Monster
     private int _mana;
     private float _magic;
     
-    private IPassive _passive;
-    private ISpell _spell;
+    private List<IPassive> _passives;
+    private List<ISpell> _spells;
     
     private List<IStatus> _statuses;
     
-    public Monster(int id, string name, int attack, int health, int armor, int resist, int special1, int special2, int mana, float magic, IPassive passive, ISpell spell)
+    public Monster(int id, string name, int attack, int health, int armor, int resist, int special1, int special2, int mana, float magic, List<IPassive> passives, List<ISpell> spells)
     {
         _id = id;
         _name = name;
@@ -31,14 +31,14 @@ public class Monster
         _special2 = special2;
         _mana = mana;
         _magic = magic;
-        _passive = passive;
-        _spell = spell;
+        _passives = passives;
+        _spells = spells;
         _statuses = new List<IStatus>();
     }
     
     public Monster DeepCopy()
     {
-        return new Monster(_id, _name, _attack, _health, _armor, _resist, _special1, _special2, _mana, _magic, _passive, _spell);
+        return new Monster(_id, _name, _attack, _health, _armor, _resist, _special1, _special2, _mana, _magic, _passives, _spells);
     }
     
 
@@ -65,6 +65,23 @@ public class Monster
     public int GetHealth()
     {
         return _health;
+    }
+    
+    public List<PossibleAction> GetPossibleActions(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    {
+        List<PossibleAction> possibleActions = new List<PossibleAction>();
+        foreach (ISpell spell in _spells)
+        {
+            possibleActions.Add(new PossibleAction(spell.GetName(), spell.GetPossibleTargets(this, playerBoard1, playerBoard2)));
+        }
+
+        possibleActions.Add(new PossibleAction("AutoAttack", new()));
+        return possibleActions;
+    }
+    
+    public List<ISpell> GetSpells()
+    {
+        return _spells;
     }
 }
 
