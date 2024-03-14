@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,5 +21,11 @@ public static class GvUi
             .Concat(playerBoard1.GetGraveyard())
             .Concat(playerBoard2.GetGraveyard())
             .ToList();
+    }
+    
+    public static void DoForBothBoards(Action<PlayerBoard> action)
+    {
+        action(playerBoard1);
+        action(playerBoard2);
     }
 }

@@ -104,4 +104,10 @@ public class ServerGameEngine : MonoBehaviour
         return _player1Board.GetMonsters().Find(monster => monster.GetId() == id) 
                ?? _player2Board.GetMonsters().Find(monster => monster.GetId() == id);
     }
+
+    private void DoForBothBoards(Action<PlayerBoard> action)
+    {
+        action(_player1Board);
+        action(_player2Board);
+    }
 }

@@ -43,23 +43,23 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
         {
             _monsterIdToTextDisplay[monster.GetId()].GetComponentInChildren<TMP_Text>().text = MonsterToText(monster);
         });
-        
-        // set all monsters in graveyard to graveyard hierarchy parent
-        playerBoard1.GetGraveyard().ForEach(monster =>
+
+        GvUi.DoForBothBoards(board =>
         {
-            _monsterIdToTextDisplay[monster.GetId()].transform.SetParent(player1GraveyardHierarchyParent.transform, false);
-        });
-        
-        playerBoard2.GetGraveyard().ForEach(monster =>
-        {
-            _monsterIdToTextDisplay[monster.GetId()].transform.SetParent(player2GraveyardHierarchyParent.transform, false);
+            board.GetGraveyard().ForEach(monster =>
+            {
+                _monsterIdToTextDisplay[monster.GetId()].GetComponent<RectTransform>().localScale = new Vector3(.3f, .3f, .3f);
+                _monsterIdToTextDisplay[monster.GetId()].transform.SetParent(GetGraveyardHierarchyParent(board).transform, false);
+            });
         });
     }
 
     private void initalizeAllMonsterUi()
     {
-        GvUi.playerBoard1.GetMonsters().ForEach(monster=>{initalizeMonsterUi(monster, player1HierarchyParent);});
-        GvUi.playerBoard2.GetMonsters().ForEach(monster=>{initalizeMonsterUi(monster, player2HierarchyParent);});
+        GvUi.DoForBothBoards(board =>
+            {
+                board.GetMonsters().ForEach(monster=>{initalizeMonsterUi(monster, GetHierarchyParent(board));});
+            });
     }
 
     private void initalizeMonsterUi(Monster monster, GameObject parent)
@@ -142,6 +142,26 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
     {
         GvUi.playerBoard1 = playerBoard1;
         GvUi.playerBoard2 = playerBoard2;
+    }
+
+    private GameObject GetHierarchyParent(PlayerBoard playerBoard)
+    {
+        if (GvUi.playerBoard1 == playerBoard)
+        {
+            return player1HierarchyParent;
+        }
+        
+        return player2HierarchyParent;
+    }
+    
+    private GameObject GetGraveyardHierarchyParent(PlayerBoard playerBoard)
+    {
+        if (GvUi.playerBoard1 == playerBoard)
+        {
+            return player1GraveyardHierarchyParent;
+        }
+        
+        return player2GraveyardHierarchyParent;
     }
 
 }
