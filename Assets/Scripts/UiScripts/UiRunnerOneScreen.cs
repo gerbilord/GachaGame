@@ -79,9 +79,8 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
 
     public void MonsterClicked(GameObject monsterTextUi)
     {
-        int monsterId = _textDisplayToMonsterId[monsterTextUi];
-        Monster monster = GvUi.GetAllMonsters().Find(m => m.GetId() == monsterId);
-        Debug.Log("Monster clicked: " + monsterId);
+        Monster monster = GetMonster(monsterTextUi);
+        Debug.Log("Monster clicked: " + monster.GetId());
         
         if(altUiRunner != null)
         {
@@ -112,16 +111,16 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
         {
             HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().monsterId], true);
             await Task.Delay(1000);
-            if (actionResult.GetPlayerAction().targetId != -1)
+            foreach (int targetId in actionResult.GetPlayerAction().targetIds)
             {
-                HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().targetId], true);
-                await Task.Delay(1000);
+                HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[targetId], true);
             }
+            await Task.Delay(1000);
             ShowBoardState(actionResult.GetPlayer1BoardSnapshot(), actionResult.GetPlayer2BoardSnapshot());
             HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().monsterId], false);
-            if (actionResult.GetPlayerAction().targetId != -1)
+            foreach (int targetId in actionResult.GetPlayerAction().targetIds)
             {
-                HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[actionResult.GetPlayerAction().targetId], false);
+                HighlighterUtils.ToggleHighlight(_monsterIdToTextDisplay[targetId], false);
             }
             await Task.Delay(1000);
         }
@@ -162,6 +161,16 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
         }
         
         return player2GraveyardHierarchyParent;
+    }
+
+    private Monster GetMonster(GameObject monsterTextUi)
+    {
+        return GvUi.GetAllMonsters().Find(monster => monster.GetId() == _textDisplayToMonsterId[monsterTextUi]);
+    }
+    
+    private GameObject GetMonsterTextUi(Monster monster)
+    {
+        return _monsterIdToTextDisplay[monster.GetId()];
     }
 
 }

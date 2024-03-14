@@ -5,7 +5,7 @@ public interface ISpell
     string GetName();
     List<Monster> GetPossibleTargets(Monster monster, PlayerBoard playerBoard1, PlayerBoard playerBoard2);
     
-    void Cast(Monster monster, Monster target, PlayerBoard playerBoard1, PlayerBoard playerBoard2);
+    PlayerAction Cast(PlayerAction playerAction, PlayerBoard playerBoard1, PlayerBoard playerBoard2);
 }
 
 public class AutoAttack : ISpell
@@ -20,8 +20,10 @@ public class AutoAttack : ISpell
         return new();
     }
 
-    public void Cast(Monster monster, Monster target, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    public PlayerAction Cast(PlayerAction playerAction, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
+        Monster monster = BoardUtils.GetMonster(playerAction.monsterId, playerBoard1, playerBoard2);
+
         PlayerBoard enemyBoard = BoardUtils.GetEnemyBoard(monster, playerBoard1, playerBoard2);
         PlayerBoard friendlyBoard = BoardUtils.GetMyBoard(monster, playerBoard1, playerBoard2);
         
@@ -29,6 +31,10 @@ public class AutoAttack : ISpell
 
         Monster autoAttackTarget = enemyBoard.GetMonsters()[myIndex];
         autoAttackTarget.TakeDamage(monster.GetAttack(), null);
+
+        PlayerAction truePlayerAction = playerAction.DeepCopy();
+        truePlayerAction.targetIds = new List<int> {autoAttackTarget.GetId()};
+        return truePlayerAction;
     }
 }
 
@@ -50,9 +56,13 @@ public class SmiteTest : ISpell
         return possibleTargets;
     }
 
-    public void Cast(Monster monster, Monster target, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    public PlayerAction Cast(PlayerAction playerAction, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
+        Monster caster = BoardUtils.GetMonster(playerAction.monsterId, playerBoard1, playerBoard2);
+        Monster target = BoardUtils.GetMonster(playerAction.targetIds[0], playerBoard1, playerBoard2);
         target.TakeDamage(10, null);
+
+        return playerAction;
     }
 }
 

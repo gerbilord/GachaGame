@@ -49,9 +49,9 @@ public class UserInputUtils
 
         if (target == null)
         {
-            return new PlayerAction(monster.GetId(), -1, MonsterUtils.GetSpell(monster, action));
+            return new PlayerAction(monster.GetId(), new(), MonsterUtils.GetSpell(monster, action));
         }
 
-        return new PlayerAction(monster.GetId(), target.GetId(), MonsterUtils.GetSpell(monster, action));
+        return new PlayerAction(monster.GetId(), new List<int>(){target.GetId()}, MonsterUtils.GetSpell(monster, action));
     }
 }

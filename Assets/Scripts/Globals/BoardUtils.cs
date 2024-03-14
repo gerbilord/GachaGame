@@ -1,3 +1,5 @@
+using System.Linq;
+
 public class BoardUtils
 {
     public static PlayerBoard GetMyBoard(Monster monster, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
@@ -22,5 +24,10 @@ public class BoardUtils
         {
             return playerBoard1;
         }
+    }
+
+    public static Monster GetMonster(int monsterId, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    {
+        return playerBoard1.GetMonsters().Concat(playerBoard2.GetMonsters()).ToList().Find(monster=> monster.GetId() == monsterId);
     }
 }

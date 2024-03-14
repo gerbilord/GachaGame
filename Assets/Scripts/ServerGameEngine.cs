@@ -51,12 +51,12 @@ public class ServerGameEngine : MonoBehaviour
             PlayerAction player1Action = _player1Actions[i];
             // PlayerAction player2Action = _player2Actions[i];
             
-            RunPlayerAction(player1Action);
+            PlayerAction truePlayer1Action = RunPlayerAction(player1Action);
             // RunPlayerAction(player2Action);
             
             SendDeadMonstersToGraveyard();
             
-            actionResults.Add(new PlayerActionResult(player1Action, _player1Board.DeepCopy(), _player2Board.DeepCopy()));
+            actionResults.Add(new PlayerActionResult(truePlayer1Action, _player1Board.DeepCopy(), _player2Board.DeepCopy()));
             // actionResults.Add(new PlayerActionResult(player2Action, _player1Board.DeepCopy(), _player2Board.DeepCopy()));
         }
 
@@ -79,21 +79,9 @@ public class ServerGameEngine : MonoBehaviour
         }
     }
 
-    private void RunPlayerAction(PlayerAction playerAction)
+    private PlayerAction RunPlayerAction(PlayerAction playerAction)
     {
-        playerAction.spell.Cast(GetMonsterById(playerAction.monsterId), GetMonsterById(playerAction.targetId), _player1Board, _player2Board);
-    }
-    
-
-    private PlayerActionResult RunAttackAction(PlayerAction playerAction)
-    {
-        Monster attacker = GetMonsterById(playerAction.monsterId);
-        Monster target = GetMonsterById(playerAction.targetId);
-
-        int damage = attacker.GetAttack();
-        target.TakeDamage(damage, null);
-
-        return new PlayerActionResult(playerAction, _player1Board.DeepCopy(), _player2Board.DeepCopy());
+        return playerAction.spell.Cast(playerAction, _player1Board, _player2Board);
     }
 
     private Monster GetMonsterById(int id)
