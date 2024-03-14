@@ -9,6 +9,14 @@ public class PlayerBoard
     private List<Monster> _graveyard;
     
     public List<Monster> GetMonsters() => new(_monsters);
+    
+    public List<Monster> GetGraveyard() => new(_graveyard);
+    
+    public void SendMonsterToGraveyard(Monster monster)
+    {
+        _monsters.Remove(monster);
+        _graveyard.Add(monster);
+    }
 
     public PlayerBoard(Hunter hunter, List<Monster> monsters, List<Monster> graveyard)
     {

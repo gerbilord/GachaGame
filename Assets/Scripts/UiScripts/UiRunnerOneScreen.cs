@@ -14,6 +14,9 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
     public GameObject player1HierarchyParent;
     public GameObject player2HierarchyParent;
     
+    public GameObject player1GraveyardHierarchyParent;
+    public GameObject player2GraveyardHierarchyParent;
+    
     public GameObject MenuGameObject;
 
     public GameObject monsterTextUiPrefab;
@@ -36,9 +39,20 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
 
     public void ShowBoardState(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
-        playerBoard1.GetMonsters().Concat(playerBoard2.GetMonsters()).ToList().ForEach(monster =>
+        GvUi.GetAllMonsters().ToList().ForEach(monster =>
         {
             _monsterIdToTextDisplay[monster.GetId()].GetComponentInChildren<TMP_Text>().text = MonsterToText(monster);
+        });
+        
+        // set all monsters in graveyard to graveyard hierarchy parent
+        playerBoard1.GetGraveyard().ForEach(monster =>
+        {
+            _monsterIdToTextDisplay[monster.GetId()].transform.SetParent(player1GraveyardHierarchyParent.transform, false);
+        });
+        
+        playerBoard2.GetGraveyard().ForEach(monster =>
+        {
+            _monsterIdToTextDisplay[monster.GetId()].transform.SetParent(player2GraveyardHierarchyParent.transform, false);
         });
     }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ServerGameEngine : MonoBehaviour
@@ -12,6 +13,11 @@ public class ServerGameEngine : MonoBehaviour
     
     private List<PlayerAction> _player1Actions;
     private List<PlayerAction> _player2Actions;
+    
+    private List<Monster> GetAllMonsters()
+    {
+        return _player1Board.GetMonsters().Concat(_player2Board.GetMonsters()).ToList();
+    }
 
     void Start()
     {
@@ -45,20 +51,37 @@ public class ServerGameEngine : MonoBehaviour
             PlayerAction player1Action = _player1Actions[i];
             // PlayerAction player2Action = _player2Actions[i];
             
-            PlayerActionResult player1Result = RunPlayerAction(player1Action);
-            // PlayerActionResult player2Result = RunPlayerAction(player2Action);
+            RunPlayerAction(player1Action);
+            // RunPlayerAction(player2Action);
             
-            actionResults.Add(player1Result);
-            // actionResults.Add(player2Result);
+            SendDeadMonstersToGraveyard();
+            
+            actionResults.Add(new PlayerActionResult(player1Action, _player1Board.DeepCopy(), _player2Board.DeepCopy()));
+            // actionResults.Add(new PlayerActionResult(player2Action, _player1Board.DeepCopy(), _player2Board.DeepCopy()));
         }
 
         return actionResults;
     }
 
-    private PlayerActionResult RunPlayerAction(PlayerAction playerAction)
+    private void SendDeadMonstersToGraveyard()
+    {
+        foreach (var monster in _player1Board.GetMonsters())
+        {
+            if (monster.GetHealth() <= 0)
+                _player1Board.SendMonsterToGraveyard(monster);
+            
+        }
+        
+        foreach (var monster in _player2Board.GetMonsters())
+        {
+            if(monster.GetHealth() <= 0)
+                _player2Board.SendMonsterToGraveyard(monster);
+        }
+    }
+
+    private void RunPlayerAction(PlayerAction playerAction)
     {
         playerAction.spell.Cast(GetMonsterById(playerAction.monsterId), GetMonsterById(playerAction.targetId), _player1Board, _player2Board);
-        return new PlayerActionResult(playerAction, _player1Board.DeepCopy(), _player2Board.DeepCopy());
     }
     
 
