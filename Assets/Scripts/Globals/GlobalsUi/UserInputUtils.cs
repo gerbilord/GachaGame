@@ -8,33 +8,33 @@ public class UserInputUtils
 {
     public static async Task<string> GetUserOptionSelect(List<string> options)
     {
-        IAltUiRunner oldAltUi = GlobalVariables.UiRunner.altUiRunner;
+        IAltUiRunner oldAltUi = GvUi.ui.altUiRunner;
         AltUiMenuSelect altUi = new AltUiMenuSelect();
-        GlobalVariables.UiRunner.altUiRunner = altUi;
+        GvUi.ui.altUiRunner = altUi;
         string input = await altUi.GetUserOptionSelect(options);
-        GlobalVariables.UiRunner.altUiRunner = oldAltUi;
+        GvUi.ui.altUiRunner = oldAltUi;
         return input;
     }
     
     public static async Task<Monster> GetMonsterSelect(List<Monster> monsters)
     {
-        IAltUiRunner oldAltUi = GlobalVariables.UiRunner.altUiRunner;
+        IAltUiRunner oldAltUi = GvUi.ui.altUiRunner;
         AltUiMonsterSelect altUi = new AltUiMonsterSelect();
-        GlobalVariables.UiRunner.altUiRunner = altUi;
+        GvUi.ui.altUiRunner = altUi;
 
         Monster monster = await altUi.GetUserMonsterSelect(monsters);
 
-        GlobalVariables.UiRunner.altUiRunner = oldAltUi;
+        GvUi.ui.altUiRunner = oldAltUi;
         return monster;
     }
     
-    public static async Task<PlayerAction> GetPlayerAction(Monster monster, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    public static async Task<PlayerAction> GetPlayerAction(Monster monster)
     {
-        IAltUiRunner oldAltUi = GlobalVariables.UiRunner.altUiRunner;
+        IAltUiRunner oldAltUi = GvUi.ui.altUiRunner;
         AltUiMenuSelect altUi = new AltUiMenuSelect();
-        GlobalVariables.UiRunner.altUiRunner = altUi;
+        GvUi.ui.altUiRunner = altUi;
 
-        List<PossibleAction> possibleActions = monster.GetPossibleActions(playerBoard1, playerBoard2);
+        List<PossibleAction> possibleActions = monster.GetPossibleActions(GvUi.playerBoard1, GvUi.playerBoard2);
 
         string action = await GetUserOptionSelect(possibleActions.Select(item=>item.name).ToList());
         
@@ -45,7 +45,7 @@ public class UserInputUtils
             target = await GetMonsterSelect(possibleTargets);
         }
 
-        GlobalVariables.UiRunner.altUiRunner = oldAltUi;
+        GvUi.ui.altUiRunner = oldAltUi;
 
         if (target == null)
         {

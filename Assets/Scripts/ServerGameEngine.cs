@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ServerGameEngine : MonoBehaviour
 {
-    private IUiRunner _uiRunner;
+    private IUiFrontendReceiver _uiRunner;
 
     private PlayerBoard _player1Board;
     private PlayerBoard _player2Board;
@@ -15,14 +15,13 @@ public class ServerGameEngine : MonoBehaviour
 
     void Start()
     {
-        
         GameObject canvas = GameObject.Find("Canvas");
         _uiRunner = canvas.GetComponent<UiRunnerOneScreen>();
-        GlobalVariables.UiRunner = _uiRunner;
+        GvUi.ui = _uiRunner as IUiRunner;
 
         _player1Board = new PlayerBoard(TestUtils.CreateHunter(), TestUtils.CreateMonsters(), new());
         _player2Board = new PlayerBoard(TestUtils.CreateHunter(), TestUtils.CreateMonsters(), new());
-        
+
         _uiRunner.OnEngineStart(this, _player1Board, _player2Board);
         _uiRunner.ShowBoardState(_player1Board, _player2Board);
     }

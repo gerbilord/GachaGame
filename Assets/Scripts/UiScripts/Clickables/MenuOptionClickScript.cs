@@ -5,6 +5,6 @@ public class MenuOptionClickScript : MonoBehaviour, IPointerClickHandler
 {
     public void OnPointerClick(PointerEventData eventData)
     {
-        GlobalVariables.UiRunner.OptionClicked(gameObject);
+        GvUi.ui.OptionClicked(gameObject);
     }
 }

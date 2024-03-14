@@ -10,7 +10,7 @@ public class AltUiMenuSelect : IAltUiRunner
 
     public void OnOptionClicked(GameObject option)
     {
-        GameObject selectMenu = GlobalVariables.UiRunner.GetMenuGameObject();
+        GameObject selectMenu = GvUi.ui.GetMenuGameObject();
         selectMenu.SetActive(false);
         
         foreach (GameObject optionText in _options)
@@ -23,7 +23,7 @@ public class AltUiMenuSelect : IAltUiRunner
 
     public async Task<string> GetUserOptionSelect(List<string> options)
     {
-        GameObject selectMenu = GlobalVariables.UiRunner.GetMenuGameObject();
+        GameObject selectMenu = GvUi.ui.GetMenuGameObject();
         selectMenu.SetActive(true);
         GameObject optionText = Resources.Load<GameObject>("Prefabs/OptionText");
         _options = new List<GameObject>();

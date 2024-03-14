@@ -5,6 +5,6 @@ public class MonsterClickScript : MonoBehaviour, IPointerClickHandler
 {
     public void OnPointerClick(PointerEventData eventData)
     {
-        GlobalVariables.UiRunner.MonsterClicked(gameObject);
+        GvUi.ui.MonsterClicked(gameObject);
     }
 }
