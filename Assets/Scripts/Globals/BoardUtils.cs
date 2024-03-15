@@ -30,4 +30,13 @@ public class BoardUtils
     {
         return playerBoard1.GetMonsters().Concat(playerBoard2.GetMonsters()).ToList().Find(monster=> monster.GetId() == monsterId);
     }
+    
+    public static Monster GetEnemyMonsterAcross(Monster monster, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    {
+        PlayerBoard enemyBoard = GetEnemyBoard(monster, playerBoard1, playerBoard2);
+        int myIndex = GetMyBoard(monster, playerBoard1, playerBoard2).GetMonsters().IndexOf(monster);
+        return enemyBoard.GetMonsters().Count > myIndex 
+            ? enemyBoard.GetMonsters()[myIndex] 
+            : enemyBoard.GetMonsters().Last();
+    }
 }

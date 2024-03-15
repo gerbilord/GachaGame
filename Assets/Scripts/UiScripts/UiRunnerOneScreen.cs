@@ -39,15 +39,17 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
 
     public void ShowBoardState(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
-        GvUi.GetAllMonsters().ToList().ForEach(monster =>
-        {
-            _monsterIdToTextDisplay[monster.GetId()].GetComponentInChildren<TMP_Text>().text = MonsterToText(monster);
-        });
-
         GvUi.DoForBothBoards(board =>
         {
+            board.GetMonsters().ForEach(monster =>
+            {
+                _monsterIdToTextDisplay[monster.GetId()].GetComponentInChildren<TMP_Text>().text = MonsterToText(monster);
+                _monsterIdToTextDisplay[monster.GetId()].transform.SetSiblingIndex(board.GetMonsters().IndexOf(monster));
+            });
+
             board.GetGraveyard().ForEach(monster =>
             {
+                _monsterIdToTextDisplay[monster.GetId()].GetComponentInChildren<TMP_Text>().text = MonsterToText(monster);
                 _monsterIdToTextDisplay[monster.GetId()].GetComponent<RectTransform>().localScale = new Vector3(.3f, .3f, .3f);
                 _monsterIdToTextDisplay[monster.GetId()].transform.SetParent(GetGraveyardHierarchyParent(board).transform, false);
             });

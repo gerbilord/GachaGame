@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public class Monster
 {
@@ -13,7 +14,7 @@ public class Monster
     private int _special2;
     private int _mana;
     private float _magic;
-    
+
     private List<IPassive> _passives;
     private List<ISpell> _spells;
     
@@ -75,7 +76,10 @@ public class Monster
             possibleActions.Add(new PossibleAction(spell.GetName(), spell.GetPossibleTargets(this, playerBoard1, playerBoard2)));
         }
 
+        // TODO make default spell area
         possibleActions.Add(new PossibleAction("AutoAttack", new()));
+        possibleActions.Add(new PossibleAction("Swap", BoardUtils.GetMyBoard(this, playerBoard1, playerBoard2).GetMonsters().Where(aMonster=> aMonster != this).ToList()));
+
         return possibleActions;
     }
     
