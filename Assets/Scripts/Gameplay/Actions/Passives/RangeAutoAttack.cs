@@ -1,3 +1,4 @@
+using System;
 using Unity.VisualScripting;
 
 // This monster can target any monster with autoattacks, dealing X(25)% damage to backline.
@@ -12,7 +13,7 @@ public class RangeAutoAttack : IPassive
     {
         if (BoardUtils.IsMonsterInBackline(context.autoAttackTarget, context.playerBoard1, context.playerBoard2))
         {
-            context.payloadDamage = context.payloadDamage / 4 * MonsterUtils.GetSpecialValue(context.monster, this);
+            context.payloadDamage = (int)Math.Ceiling(context.payloadDamage * (.25f * MonsterUtils.GetSpecialValue(context.monster, this)));
         }
     }
 }
