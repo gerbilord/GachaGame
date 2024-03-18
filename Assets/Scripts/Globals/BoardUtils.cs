@@ -39,4 +39,9 @@ public class BoardUtils
             ? enemyBoard.GetMonsters()[myIndex] 
             : enemyBoard.GetMonsters().Last();
     }
+    
+    public static bool IsMonsterInBackline(Monster monster, PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    {
+        return GetMyBoard(monster, playerBoard1, playerBoard2).GetMonsters().IndexOf(monster) > 2;
+    }
 }

@@ -89,8 +89,8 @@ public class Monster
     {
         List<PossibleAction> possibleActions = new List<PossibleAction>();
 
-        possibleActions.Add(new PossibleAction(_autoAttack.GetName(), new()));
-        possibleActions.Add(new PossibleAction(_swap.GetName(), BoardUtils.GetMyBoard(this, playerBoard1, playerBoard2).GetMonsters().Where(aMonster=> aMonster != this).ToList()));
+        possibleActions.Add(new PossibleAction(_autoAttack.GetName(), _autoAttack.GetPossibleTargets(this, playerBoard1, playerBoard2)));
+        possibleActions.Add(new PossibleAction(_swap.GetName(), _swap.GetPossibleTargets(this, playerBoard1, playerBoard2)));
         
         foreach (ISpell spell in _spells)
         {
@@ -105,6 +105,11 @@ public class Monster
         return _spells;
     }
     
+    public List<IPassive> GetPassives()
+    {
+        return _passives;
+    }
+    
     public ISpell GetAutoAttack()
     {
         return _autoAttack;
@@ -113,6 +118,16 @@ public class Monster
     public ISpell GetSwap()
     {
         return _swap;
+    }
+    
+    public int GetSpecial1()
+    {
+        return _special1;
+    }
+    
+    public int GetSpecial2()
+    {
+        return _special2;
     }
 }
 
