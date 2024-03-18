@@ -33,12 +33,12 @@ public class UserInputUtils
         IAltUiRunner oldAltUi = GvUi.ui.altUiRunner;
         AltUiMenuSelect altUi = new AltUiMenuSelect();
         GvUi.ui.altUiRunner = altUi;
-
-        List<PossibleAction> possibleActions = monster.GetPossibleActions(GvUi.playerBoard1, GvUi.playerBoard2);
-
-        string action = await GetUserOptionSelect(possibleActions.Select(item=>item.name).ToList());
         
-        List<Monster> possibleTargets = possibleActions.First(item => item.name == action).possibleTargets;
+        List<ISpell> castableSpells = monster.GetCastableSpells(GvUi.playerBoard1, GvUi.playerBoard2);
+
+        string spellName = await GetUserOptionSelect(castableSpells.Select(spell => spell.GetName()).ToList());
+        
+        List<Monster> possibleTargets = castableSpells.First(spell => spell.GetName() == spellName).GetPossibleTargets(monster, GvUi.playerBoard1, GvUi.playerBoard2);
         Monster target = null;
         if (possibleTargets.Count > 0)
         {
@@ -49,9 +49,9 @@ public class UserInputUtils
 
         if (target == null)
         {
-            return new PlayerAction(monster.GetId(), new(), MonsterUtils.GetSpell(monster, action));
+            return new PlayerAction(monster.GetId(), new(), MonsterUtils.GetSpell(monster, spellName));
         }
 
-        return new PlayerAction(monster.GetId(), new List<int>(){target.GetId()}, MonsterUtils.GetSpell(monster, action));
+        return new PlayerAction(monster.GetId(), new List<int>(){target.GetId()}, MonsterUtils.GetSpell(monster, spellName));
     }
 }

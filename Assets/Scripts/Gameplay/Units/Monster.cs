@@ -85,19 +85,19 @@ public class Monster
         return _health;
     }
     
-    public List<PossibleAction> GetPossibleActions(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
+    public List<ISpell> GetCastableSpells(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
-        List<PossibleAction> possibleActions = new List<PossibleAction>();
+        List<ISpell> castableSpells = new List<ISpell>();
 
-        possibleActions.Add(new PossibleAction(_autoAttack.GetName(), _autoAttack.GetPossibleTargets(this, playerBoard1, playerBoard2)));
-        possibleActions.Add(new PossibleAction(_swap.GetName(), _swap.GetPossibleTargets(this, playerBoard1, playerBoard2)));
+        castableSpells.Add(_autoAttack);
+        castableSpells.Add(_swap);
         
         foreach (ISpell spell in _spells)
         {
-            possibleActions.Add(new PossibleAction(spell.GetName(), spell.GetPossibleTargets(this, playerBoard1, playerBoard2)));
+            castableSpells.Add(spell);
         }
 
-        return possibleActions;
+        return castableSpells;
     }
     
     public List<ISpell> GetSpells()
