@@ -24,6 +24,8 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
     private Dictionary<int, GameObject> _monsterIdToTextDisplay = new Dictionary<int, GameObject>();
     private Dictionary<GameObject, int> _textDisplayToMonsterId = new Dictionary<GameObject, int>();
     
+    private List<PlayerAction> _queuedPlayerActions = new List<PlayerAction>();
+    
     public GameObject GetMenuGameObject()
     {
         return MenuGameObject;
@@ -39,7 +41,7 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
 
     public void ShowBoardState(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
-        GvUi.DoForBothBoards(board =>
+        GvUi.DoForBothBoardSnapshots(playerBoard1, playerBoard2, board =>
         {
             board.GetMonsters().ForEach(monster =>
             {
@@ -90,13 +92,31 @@ public class UiRunnerOneScreen : MonoBehaviour, IUiRunner, IUiFrontendReceiver
             return;
         }
 
+        bool monsterHasActionQueued = _queuedPlayerActions.Any(action => action.monsterId == monster.GetId());
+        bool player1HasMonster = GvUi.playerBoard1.GetMonsters().Contains(monster);
+        bool player2HasMonster = GvUi.playerBoard2.GetMonsters().Contains(monster);
+        bool player1HasActionQueued = _queuedPlayerActions.Any(action => GvUi.playerBoard1.GetMonsters().Contains(GvUi.GetMonster(action.monsterId)));
+        bool player2HasActionQueued = _queuedPlayerActions.Any(action => GvUi.playerBoard2.GetMonsters().Contains(GvUi.GetMonster(action.monsterId)));
+
+        if (player1HasMonster && player1HasActionQueued || player2HasMonster && player2HasActionQueued || monsterHasActionQueued)
+        {
+            return;
+        }
+
         AsyncUtils.ForgetAndLog(GetUserAction(monster));
     }
 
     public async Task GetUserAction(Monster monster)
     {
         PlayerAction playerAction = await UserInputUtils.GetPlayerAction(monster);
-        _serverGameEngine.ReceivePlayerActions(new List<PlayerAction>(){playerAction}, new());
+        _queuedPlayerActions.Add(playerAction);
+        if (_queuedPlayerActions.Count == 2)
+        {
+            List<PlayerAction> playerActions1 = _queuedPlayerActions.FindAll(action => GvUi.playerBoard1.GetMonsters().Contains(GvUi.GetMonster(action.monsterId)));
+            List<PlayerAction> playerActions2 = _queuedPlayerActions.FindAll(action => GvUi.playerBoard2.GetMonsters().Contains(GvUi.GetMonster(action.monsterId)));
+            _queuedPlayerActions.Clear();
+            _serverGameEngine.ReceivePlayerActions(playerActions1, playerActions2);
+        }
     }
     
     public void OptionClicked(GameObject option)

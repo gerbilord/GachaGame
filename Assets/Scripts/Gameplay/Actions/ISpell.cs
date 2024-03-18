@@ -7,10 +7,19 @@ public interface ISpell
     List<Monster> GetPossibleTargets(Monster monster, PlayerBoard playerBoard1, PlayerBoard playerBoard2);
     
     PlayerAction Cast(PlayerAction playerAction, PlayerBoard playerBoard1, PlayerBoard playerBoard2);
+    
+    DamageType GetDamageType();
 }
 
 public class AutoAttack : ISpell
 {
+    private DamageType _damageType;
+    
+    public AutoAttack(DamageType damageType)
+    {
+        _damageType = damageType;
+    }
+
     public string GetName()
     {
         return "AutoAttack";
@@ -26,16 +35,26 @@ public class AutoAttack : ISpell
         Monster monster = BoardUtils.GetMonster(playerAction.monsterId, playerBoard1, playerBoard2);
         Monster autoAttackTarget = BoardUtils.GetEnemyMonsterAcross(monster, playerBoard1, playerBoard2); 
 
-        autoAttackTarget.TakeDamage(monster.GetAttack(), null);
+        autoAttackTarget.TakeDamage(monster.GetAttack(), this);
 
         PlayerAction truePlayerAction = playerAction.DeepCopy();
         truePlayerAction.targetIds = new List<int> { autoAttackTarget.GetId() };
         return truePlayerAction;
     }
+
+    public DamageType GetDamageType()
+    {
+        return _damageType;
+    }
 }
 
 public class Swap : ISpell
 {
+    public DamageType GetDamageType()
+    {
+        return DamageType.Physical; 
+    }
+
     public string GetName()
     {
         return "Swap";
@@ -60,6 +79,11 @@ public class Swap : ISpell
 
 public class SmiteTest : ISpell
 {
+    public DamageType GetDamageType()
+    {
+        return DamageType.Magical; 
+    }
+
     public string GetName()
     {
         return "SmiteTest";
@@ -80,7 +104,7 @@ public class SmiteTest : ISpell
     {
         Monster caster = BoardUtils.GetMonster(playerAction.monsterId, playerBoard1, playerBoard2);
         Monster target = BoardUtils.GetMonster(playerAction.targetIds[0], playerBoard1, playerBoard2);
-        target.TakeDamage(10, null);
+        target.TakeDamage(10, this);
 
         return playerAction;
     }

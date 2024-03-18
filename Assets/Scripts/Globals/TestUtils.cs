@@ -11,7 +11,7 @@ public static class TestUtils
 
     private static Monster CreateDemon(string name)
     {
-        return new Monster(_id++, name, 1, 2, 1, 1, 1, 1, 0, .8f, new(), new List<ISpell> {new SmiteTest()});
+        return new Monster(_id++, name, 1, 2, 1, 1, 1, 1, 0, .8f, DamageType.Physical, new(), new List<ISpell> {new SmiteTest()});
     }
 
     public static List<Monster> CreateMonsters()

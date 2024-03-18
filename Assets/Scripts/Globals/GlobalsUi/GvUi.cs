@@ -28,4 +28,15 @@ public static class GvUi
         action(playerBoard1);
         action(playerBoard2);
     }
+    
+    public static void DoForBothBoardSnapshots(PlayerBoard playerBoardSnapshot1, PlayerBoard playerBoardSnapshot2, Action<PlayerBoard> action)
+    {
+        action(playerBoardSnapshot1);
+        action(playerBoardSnapshot2);
+    }
+
+    public static Monster GetMonster(int id)
+    {
+        return GetAllMonsters().First(monster => monster.GetId() == id);
+    }
 }

@@ -49,15 +49,15 @@ public class ServerGameEngine : MonoBehaviour
         for (int i = 0; i < _player1Actions.Count; i++)
         {
             PlayerAction player1Action = _player1Actions[i];
-            // PlayerAction player2Action = _player2Actions[i];
+            PlayerAction player2Action = _player2Actions[i];
             
             PlayerAction truePlayer1Action = RunPlayerAction(player1Action);
-            // RunPlayerAction(player2Action);
+            actionResults.Add(new PlayerActionResult(truePlayer1Action, _player1Board.DeepCopy(), _player2Board.DeepCopy()));
+            
+            PlayerAction truePlayer2Action = RunPlayerAction(player2Action);
+            actionResults.Add(new PlayerActionResult(truePlayer2Action, _player1Board.DeepCopy(), _player2Board.DeepCopy()));
             
             SendDeadMonstersToGraveyard();
-            
-            actionResults.Add(new PlayerActionResult(truePlayer1Action, _player1Board.DeepCopy(), _player2Board.DeepCopy()));
-            // actionResults.Add(new PlayerActionResult(player2Action, _player1Board.DeepCopy(), _player2Board.DeepCopy()));
         }
 
         return actionResults;

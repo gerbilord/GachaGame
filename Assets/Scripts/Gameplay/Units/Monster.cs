@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 
 public class Monster
 {
@@ -15,12 +16,14 @@ public class Monster
     private int _mana;
     private float _magic;
 
+    private ISpell _autoAttack;
+    private ISpell _swap;
     private List<IPassive> _passives;
     private List<ISpell> _spells;
     
     private List<IStatus> _statuses;
     
-    public Monster(int id, string name, int attack, int health, int armor, int resist, int special1, int special2, int mana, float magic, List<IPassive> passives, List<ISpell> spells)
+    public Monster(int id, string name, int attack, int health, int armor, int resist, int special1, int special2, int mana, float magic, DamageType autoAttackDamageType, List<IPassive> passives, List<ISpell> spells)
     {
         _id = id;
         _name = name;
@@ -33,13 +36,15 @@ public class Monster
         _mana = mana;
         _magic = magic;
         _passives = passives;
+        _autoAttack = new AutoAttack(autoAttackDamageType);
+        _swap = new Swap();
         _spells = spells;
         _statuses = new List<IStatus>();
     }
     
     public Monster DeepCopy()
     {
-        return new Monster(_id, _name, _attack, _health, _armor, _resist, _special1, _special2, _mana, _magic, _passives, _spells);
+        return new Monster(_id, _name, _attack, _health, _armor, _resist, _special1, _special2, _mana, _magic, _autoAttack.GetDamageType(), _passives, _spells);
     }
     
 
@@ -53,8 +58,20 @@ public class Monster
         return _attack;
     }
 
-    public void TakeDamage(int damage, DamageType damageType)
+    public void TakeDamage(int damage, ISpell damagingSpell)
     {
+        if(damage < 1)
+        {
+            return;
+        }
+
+        int damageToSubtract = damagingSpell.GetDamageType() == DamageType.Physical ? _armor : _resist;
+        damage -= damageToSubtract;
+        if (damage < 1)
+        {
+            damage = 1;
+        }
+        
         _health -= damage;
     }
 
@@ -71,14 +88,14 @@ public class Monster
     public List<PossibleAction> GetPossibleActions(PlayerBoard playerBoard1, PlayerBoard playerBoard2)
     {
         List<PossibleAction> possibleActions = new List<PossibleAction>();
+
+        possibleActions.Add(new PossibleAction(_autoAttack.GetName(), new()));
+        possibleActions.Add(new PossibleAction(_swap.GetName(), BoardUtils.GetMyBoard(this, playerBoard1, playerBoard2).GetMonsters().Where(aMonster=> aMonster != this).ToList()));
+        
         foreach (ISpell spell in _spells)
         {
             possibleActions.Add(new PossibleAction(spell.GetName(), spell.GetPossibleTargets(this, playerBoard1, playerBoard2)));
         }
-
-        // TODO make default spell area
-        possibleActions.Add(new PossibleAction("AutoAttack", new()));
-        possibleActions.Add(new PossibleAction("Swap", BoardUtils.GetMyBoard(this, playerBoard1, playerBoard2).GetMonsters().Where(aMonster=> aMonster != this).ToList()));
 
         return possibleActions;
     }
@@ -87,8 +104,20 @@ public class Monster
     {
         return _spells;
     }
+    
+    public ISpell GetAutoAttack()
+    {
+        return _autoAttack;
+    }
+    
+    public ISpell GetSwap()
+    {
+        return _swap;
+    }
 }
 
-public class DamageType
+public enum DamageType
 {
+    Physical,
+    Magical,
 }

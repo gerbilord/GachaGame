@@ -2,14 +2,13 @@ public static class MonsterUtils
 {
     public static ISpell GetSpell(Monster monster, string spellName)
     {
-        // TODO Make default spells area
-        if(spellName == "AutoAttack")
+        if(spellName == monster.GetAutoAttack().GetName())
         {
-            return new AutoAttack();
+            return monster.GetAutoAttack();
         }
-        else if(spellName == "Swap")
+        if(spellName == monster.GetSwap().GetName())
         {
-            return new Swap();
+            return monster.GetSwap();
         }
 
         foreach (var spell in monster.GetSpells())
