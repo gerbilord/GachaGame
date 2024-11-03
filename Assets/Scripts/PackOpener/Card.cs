@@ -22,7 +22,7 @@ public class Card
     public Card(string name, Dictionary<Stat, int> stats, bool isMagic)
     {
         this.name = name;
-        this.stats = new Dictionary<Stat, int>(stats);
+        this.stats = new(stats);
         this.isMagic = isMagic;
     }
 

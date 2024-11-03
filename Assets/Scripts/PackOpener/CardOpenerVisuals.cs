@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -5,6 +8,13 @@ using UnityEngine.EventSystems;
 public class CardOpenerVisuals : MonoBehaviour, IPointerClickHandler
 {
     int rarityLevel = 1;
+    List<GameObject> explosionPrefabs = new List<GameObject>();
+
+    private void OnEnable()
+    {
+        // Load all prefabs from folder /Explosions
+        explosionPrefabs = Resources.LoadAll<GameObject>("Prefabs/ExplosionEffects").ToList();
+    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -17,7 +27,13 @@ public class CardOpenerVisuals : MonoBehaviour, IPointerClickHandler
         }
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
+            GameObject explosionPrefabToCopy = explosionPrefabs[UnityEngine.Random.Range(0, explosionPrefabs.Count)];
+            GameObject explosion = Instantiate(explosionPrefabToCopy, Vector3.zero, explosionPrefabToCopy.transform.rotation);
+
             text.text = BaseCard.GenerateRandomCardWithRarity(rarityLevel).ToString();
+            
+            // Destroy the explosion effect after 3 seconds
+            Destroy(explosion, 3);
         }
         
     }

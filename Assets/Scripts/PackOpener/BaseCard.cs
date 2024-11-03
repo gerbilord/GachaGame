@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using Random = System.Random;
 
 public class BaseCard : Card
 {
@@ -61,13 +63,29 @@ public class BaseCard : Card
             card.stats[stat] += 1;
         }
 
-        decaySpecials(card);
+        checkStatsAreCorrect(card, rarity);
+        decaySpecials(card, rarity);
 
 
         return card;
     }
 
-    private void decaySpecials(Card card)
+    private void checkStatsAreCorrect(Card card, Rarity rarity)
+    {
+        int totalStats = 0;
+        foreach(Stat stat in Enum.GetValues(typeof(Stat)))
+        {
+            totalStats += card.stats[stat];
+        }
+
+        if(totalStats != 7 + rarity.rarityStats)
+        {
+            Debug.LogError($"Stats are off by {totalStats - (7 + rarity.rarityStats)}");
+        }
+
+    }
+
+    private void decaySpecials(Card card, Rarity rarity)
     {
         List<Stat> decayedStats = new List<Stat>();
         bool special1Decayed = rollPercentChance(.25);
@@ -76,14 +94,14 @@ public class BaseCard : Card
         int totalStatsToDecay = 0;
         if(special1Decayed)
         {
-            totalStatsToDecay += stats[Stat.Special1];
-            stats[Stat.Special1] = 0;
+            totalStatsToDecay += card.stats[Stat.Special1];
+            card.stats[Stat.Special1] = 0;
             decayedStats.Add(Stat.Special1);
         }
         if(special2Decayed)
         {
-            totalStatsToDecay += stats[Stat.Special2];
-            stats[Stat.Special2] = 0;
+            totalStatsToDecay += card.stats[Stat.Special2];
+            card.stats[Stat.Special2] = 0;
             decayedStats.Add(Stat.Special2);
         }
         
@@ -92,6 +110,8 @@ public class BaseCard : Card
             Stat stat = getWeightedRandomStatWithout(decayedStats);
             card.stats[stat] += 1;
         }
+        
+        checkStatsAreCorrect(card, rarity);
     }
 
     private bool rollPercentChance(double chance)
