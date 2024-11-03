@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/PackOpener.unity
+    guid: d056beb991c2d0e4983bd76ebe684288
   m_configObjects: {}
