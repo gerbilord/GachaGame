@@ -25,7 +25,7 @@ public class CardOpenerVisuals : MonoBehaviour, IPointerClickHandler
 
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            CycleRarityLevel();
+            CycleRarityLevel(texts);
         }
         else if (eventData.button == PointerEventData.InputButton.Left)
         {
@@ -102,10 +102,10 @@ public class CardOpenerVisuals : MonoBehaviour, IPointerClickHandler
         return null;
     }
 
-    public void CycleRarityLevel()
+    public void CycleRarityLevel(TMP_Text[] texts)
     {
         // get TMPro text component
-        TMP_Text text = GetComponentInChildren<TMP_Text>();
+        TMP_Text text = getNameText(texts);
         
         // cycle rarity level
         rarityLevel = rarityLevel % 8 + 1;
