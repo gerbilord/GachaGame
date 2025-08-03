@@ -7,10 +7,11 @@ public class InitScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CardGenerator cardGenerator = new CardGenerator();
-        CardData card = cardGenerator.generateCardDataForRarity(0);
-        
-        Debug.Log(card.ToString());
+        for (int i = 0; i < 100; i++)
+        {
+            CardData card = CardGenerator.GenerateCard();
+            Debug.Log(card.ToString());
+        }
     }
 
     // Update is called once per frame

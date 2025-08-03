@@ -6,6 +6,7 @@ public class CardData
     public Dictionary<Stat, int> stats = new Dictionary<Stat, int>();
     public bool isMagic { get; set; }
     public bool isNightmare { get; set; }
+    public int rarityLevel { get; set; }
 
     public CardData(CreatureType type, int attack, int hp, int armor, int resist, int special1, int special2, int special3, int special4, int mana)
     {
@@ -23,12 +24,13 @@ public class CardData
         this.isNightmare = false;
     }
     
-    private CardData(CreatureType type, Dictionary<Stat, int> stats, bool isMagic, bool isNightmare)
+    private CardData(CreatureType type, Dictionary<Stat, int> stats, bool isMagic, bool isNightmare, int rarityLevel)
     {
         this.creatureType = type;
         this.stats = new(stats);
         this.isMagic = isMagic;
         this.isNightmare = isNightmare;
+        this.rarityLevel = rarityLevel;
     }
 
     public CardData Copy()
@@ -37,7 +39,8 @@ public class CardData
             creatureType,
             new Dictionary<Stat, int>(stats),
             isMagic,
-            isNightmare
+            isNightmare,
+            rarityLevel
         );
         return copy;
     }
@@ -50,9 +53,7 @@ public class CardData
             statOutput += $"{stat.Key}: {stat.Value}\n";
         }
 
-        return $"Type: {creatureType}\n" +
-               $"{statOutput}Magic: {(isMagic ? "Yes" : "No")}\n" +
-               $"Nightmare: {(isNightmare ? "Yes" : "No")}";
+        return $"{(isNightmare ? "Nightmarish " : "")}"+ $"{Rarity.GetRarity(rarityLevel).rarityName} " + $"{creatureType}\n" +
+               $"{statOutput}Magic: {(isMagic ? "Yes" : "No")}\n";
     }
-
 }
