@@ -40,7 +40,7 @@ public class BasicCardData : CardData
     
     public float chanceIsMagic { get; set; }
 
-    public BasicCardData(CreatureType type, int attack, int hp, int armor, int resist, int special1, int special2, int special3, int special4, int mana, float chanceIsMagic) : base(type, attack, hp, armor, resist, special1, special2, special3, special4, mana)
+    private BasicCardData(CreatureType type, int attack, int hp, int armor, int resist, int special1, int special2, int special3, int special4, int mana, float chanceIsMagic) : base(type, attack, hp, armor, resist, special1, special2, special3, special4, mana)
     {
         this.chanceIsMagic = chanceIsMagic;
     }

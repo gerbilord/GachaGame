@@ -59,6 +59,8 @@ public static class CardGenerator
         
             // Mark as Nightmare (we'll need to add this field to CardData)
             card.isNightmare = true;
+            
+            Debug.Log($"Card {card.creatureType} has been transformed into a Nightmare!");
         }
     }
 
