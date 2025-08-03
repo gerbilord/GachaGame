@@ -433,7 +433,6 @@ GameObject:
   - component: {fileID: 1977464226}
   - component: {fileID: 1977464225}
   - component: {fileID: 1977464224}
-  - component: {fileID: 1977464228}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -524,21 +523,3 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1977464228
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1977464223}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67cb1549ea004a3b93ecc163a6c34b03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player1HierarchyParent: {fileID: 0}
-  player2HierarchyParent: {fileID: 0}
-  player1GraveyardHierarchyParent: {fileID: 0}
-  player2GraveyardHierarchyParent: {fileID: 0}
-  MenuGameObject: {fileID: 0}
-  monsterTextUiPrefab: {fileID: 2403540313649125407, guid: 46b64710c47c7bb44a842b06c86edca5, type: 3}

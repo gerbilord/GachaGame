@@ -5,8 +5,9 @@ public class CardData
     public CreatureType creatureType { get; set; }
     public Dictionary<Stat, int> stats = new Dictionary<Stat, int>();
     public bool isMagic { get; set; }
+    public bool isNightmare { get; set; }
 
-    public CardData(CreatureType type, int attack, int hp, int armor, int resist, int special1, int special2, int special3, int special4, int mana, bool isMagic)
+    public CardData(CreatureType type, int attack, int hp, int armor, int resist, int special1, int special2, int special3, int special4, int mana)
     {
         creatureType = type;
         stats.Add(Stat.Attack, attack);
@@ -18,23 +19,27 @@ public class CardData
         stats.Add(Stat.Special3, special3);
         stats.Add(Stat.Special4, special4);
         stats.Add(Stat.Mana, mana);
-        this.isMagic = isMagic;
+        this.isMagic = false;
+        this.isNightmare = false;
     }
     
-    public CardData(CreatureType type, Dictionary<Stat, int> stats, bool isMagic)
+    private CardData(CreatureType type, Dictionary<Stat, int> stats, bool isMagic, bool isNightmare)
     {
         this.creatureType = type;
         this.stats = new(stats);
         this.isMagic = isMagic;
+        this.isNightmare = isNightmare;
     }
 
     public CardData Copy()
     {
-        return new CardData(
+        var copy = new CardData(
             creatureType,
             new Dictionary<Stat, int>(stats),
-            isMagic
+            isMagic,
+            isNightmare
         );
+        return copy;
     }
 
     public override string ToString()
@@ -46,7 +51,8 @@ public class CardData
         }
 
         return $"Type: {creatureType}\n" +
-               $"{statOutput}Magic: {(isMagic ? "Yes" : "No")}";
+               $"{statOutput}Magic: {(isMagic ? "Yes" : "No")}\n" +
+               $"Nightmare: {(isNightmare ? "Yes" : "No")}";
     }
 
 }
