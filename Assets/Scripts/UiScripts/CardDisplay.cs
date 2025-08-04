@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class CardDisplay : MonoBehaviour
 {
@@ -18,17 +19,17 @@ public class CardDisplay : MonoBehaviour
     
     [Header("Visual Indicators")]
     public GameObject magicIndicator;
-    public GameObject nightmareIndicator;
+    public List<GameObject> nightmareIndicators;
     public RawImage background;
 
     public void SetCardData(CardData cardData)
     {
         if (titleText != null)
-            titleText.text = $"{(cardData.isNightmare ? "Nightmarish " : "")}"+ $"{Rarity.GetRarity(cardData.rarityLevel).rarityName} " + $"{cardData.creatureType}";
+            titleText.text = $"{(cardData.isNightmare ? "Nightmarish " : "")}" + $"{Rarity.GetRarity(cardData.rarityLevel).rarityName} " + $"{cardData.creatureType}";
 
         if (attackText != null)
             attackText.text = cardData.stats[Stat.Attack].ToString();
-            
+
         if (hpText != null)
             hpText.text = cardData.stats[Stat.Hp].ToString();
 
@@ -43,10 +44,10 @@ public class CardDisplay : MonoBehaviour
             resistText.text = cardData.stats[Stat.Resist].ToString();
             resistText.gameObject.SetActive(!cardData.isNightmare);
         }
-            
+
         if (special1Text != null)
             special1Text.text = cardData.stats[Stat.Special1].ToString();
-            
+
         if (special2Text != null)
             special2Text.text = cardData.stats[Stat.Special2].ToString();
 
@@ -62,19 +63,17 @@ public class CardDisplay : MonoBehaviour
             special4Text.text = cardData.stats[Stat.Special4].ToString();
             special4Text.gameObject.SetActive(cardData.isNightmare);
         }
-            
-            
+
+
         if (manaText != null)
             manaText.text = cardData.stats[Stat.Mana].ToString();
-            
+
         if (magicIndicator != null)
             magicIndicator.SetActive(cardData.isMagic);
-            
-        if (nightmareIndicator != null)
-            nightmareIndicator.SetActive(cardData.isNightmare);
-        
-        
-        
+
+        if (nightmareIndicators != null)
+            nightmareIndicators.ForEach(go => { go.SetActive(cardData.isNightmare); });
+
 
         if (background != null)
         {
