@@ -26,23 +26,33 @@ public class InitScript : MonoBehaviour
     
     void GenerateCards()
     {
-        for (int i = 0; i < 21; i++)
+        for (int i = 0; i < 3; i++)
         {
-            CardData card = CardGenerator.GenerateCard();
-            
-            // Instantiate card prefab
-            GameObject cardObject = Instantiate(cardPrefab, libraryGrid.transform);
-            currentCards.Add(cardObject);
-            
-            // Get CardDisplay component and set data
-            CardDisplay cardDisplay = cardObject.GetComponent<CardDisplay>();
-            if (cardDisplay != null)
+            int cardsGenerated = 1;
+            int maxCards = 7; // Maximum cards to generate
+            while (cardsGenerated <= maxCards)
             {
-                cardDisplay.SetCardData(card);
-            }
-            else
-            {
-                Debug.LogError("CardDisplay component not found on card prefab!");
+                CardData card = CardGenerator.GenerateCard();
+
+                if (cardsGenerated > 5 && card.rarityLevel == 1)
+                {
+                    continue; // Skip low rarity cards after 5 cards have been generated
+                }
+                // Instantiate card prefab
+                GameObject cardObject = Instantiate(cardPrefab, libraryGrid.transform);
+                currentCards.Add(cardObject);
+                
+                // Get CardDisplay component and set data
+                CardDisplay cardDisplay = cardObject.GetComponent<CardDisplay>();
+                if (cardDisplay != null)
+                {
+                    cardDisplay.SetCardData(card);
+                }
+                else
+                {
+                    Debug.LogError("CardDisplay component not found on card prefab!");
+                }
+                cardsGenerated++;
             }
         }
     }
