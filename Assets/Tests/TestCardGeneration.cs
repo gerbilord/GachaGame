@@ -13,7 +13,8 @@ public class TestCardGeneration
         for (int i = 0; i < 100; i++)
         {
             CardData card = CardGenerator.GenerateCard();
-            Assert.AreEqual(10 + 7 * card.rarityLevel, card.stats.Values.Sum());
+            Rarity rarity = Rarity.GetRarity(card.rarityLevel);
+            Assert.AreEqual(10 + rarity.extraStats, card.stats.Values.Sum());
         }
     }
 }

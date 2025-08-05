@@ -16,9 +16,6 @@ public static class CardGenerator
     private const float SPECIAL1_DECAY_CHANCE = 0.25f;
     private const float SPECIAL2_DECAY_CHANCE = 0.5f;
     
-    // Stat generation constants
-    private const int STATS_PER_RARITY_LEVEL = 7;
-    
     // Stat weights for random distribution
     private const float ATTACK_WEIGHT = 0.25f;
     private const float HP_WEIGHT = 0.25f;
@@ -84,7 +81,8 @@ public static class CardGenerator
 
     private static void GiveExtraStatsBasedForRarity(int rarityLevel, CardData newCard)
     {
-        int totalExtraStatPoints = STATS_PER_RARITY_LEVEL * rarityLevel;
+        Rarity rarity = Rarity.GetRarity(rarityLevel);
+        int totalExtraStatPoints = rarity.extraStats;
 
         for (int i = 0; i < totalExtraStatPoints; i++)
         {
