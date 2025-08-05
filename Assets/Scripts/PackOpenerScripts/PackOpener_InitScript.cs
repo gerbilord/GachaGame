@@ -28,6 +28,10 @@ public class PackOpener_InitScript : MonoBehaviour
         {
             RegenerateCards();
         }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneLoader.Instance.LoadSceneAdditive(SceneType.MainMenu);
+        }
     }
     
     void GenerateCards()
