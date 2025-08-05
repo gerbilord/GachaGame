@@ -32,15 +32,42 @@ public class CardHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExi
         // Create container instance if it doesn't exist
         if (hoverInfoContainerInstance == null)
         {
-            hoverInfoContainerInstance = Instantiate(hoverInfoContainerPrefab, transform);
-            // Position it to the right of the card
-            RectTransform containerRect = hoverInfoContainerInstance.GetComponent<RectTransform>();
-            if (containerRect != null)
+            // Find the topmost canvas to ensure hover info is always on top
+            Canvas topCanvas = GetComponentInParent<Canvas>();
+            Transform parentTransform = topCanvas != null ? topCanvas.transform : transform;
+            
+            hoverInfoContainerInstance = Instantiate(hoverInfoContainerPrefab, parentTransform);
+            
+            // Ensure it's the last child (renders on top)
+            hoverInfoContainerInstance.transform.SetAsLastSibling();
+            
+            // Add Canvas component to ensure proper sorting
+            Canvas hoverCanvas = hoverInfoContainerInstance.GetComponent<Canvas>();
+            if (hoverCanvas == null)
             {
-                containerRect.anchorMin = new Vector2(1, 0.5f);
-                containerRect.anchorMax = new Vector2(1, 0.5f);
-                containerRect.pivot = new Vector2(0, 0.5f);
-                containerRect.anchoredPosition = new Vector2(10, 0);
+                hoverCanvas = hoverInfoContainerInstance.AddComponent<Canvas>();
+            }
+            hoverCanvas.overrideSorting = true;
+            hoverCanvas.sortingOrder = 1000; // High value to ensure it's on top
+            
+            // Add GraphicRaycaster if needed for interaction
+            if (hoverInfoContainerInstance.GetComponent<UnityEngine.UI.GraphicRaycaster>() == null)
+            {
+                hoverInfoContainerInstance.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+            }
+            
+            // Position it relative to the card
+            RectTransform containerRect = hoverInfoContainerInstance.GetComponent<RectTransform>();
+            RectTransform cardRect = GetComponent<RectTransform>();
+            if (containerRect != null && cardRect != null)
+            {
+                // Get world position of the card's right edge
+                Vector3[] cardCorners = new Vector3[4];
+                cardRect.GetWorldCorners(cardCorners);
+                Vector3 rightEdgePos = (cardCorners[2] + cardCorners[3]) / 2f;
+                
+                // Convert to local position in parent canvas
+                containerRect.position = rightEdgePos + new Vector3(10, 0, 0);
             }
         }
         
