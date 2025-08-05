@@ -37,7 +37,11 @@ public class SceneLoader : MonoBehaviour
     [SerializeField] private string sceneCardLibraryReference = "Scene_CardLibrary";
     [SerializeField] private string scenePackOpenerReference = "Scene_PackOpener";
 
+    [Header("Loading Screen")]
+    [SerializeField] private GameObject loadingScreen;
+    
     private string currentAdditiveScene = null;
+    private LoadingScreenAnimator loadingScreenAnimator;
 
     private void Awake()
     {
@@ -48,7 +52,14 @@ public class SceneLoader : MonoBehaviour
         }
 
         instance = this;
-        // DontDestroyOnLoad(gameObject);
+
+        SetupLoadingScreenAnimator();
+    }
+    
+    private void SetupLoadingScreenAnimator()
+    {
+        loadingScreenAnimator = gameObject.GetComponent<LoadingScreenAnimator>();
+        loadingScreenAnimator.Initialize(loadingScreen);
     }
 
     public void LoadSceneAdditive(SceneType sceneType)
@@ -101,6 +112,8 @@ public class SceneLoader : MonoBehaviour
             yield break;
         }
 
+        yield return loadingScreenAnimator.ShowLoadingScreen();
+
         if (!string.IsNullOrEmpty(currentAdditiveScene))
         {
             Debug.Log($"Unloading scene: {currentAdditiveScene}");
@@ -121,6 +134,7 @@ public class SceneLoader : MonoBehaviour
         if (loadOperation == null)
         {
             Debug.LogError($"Failed to load scene: {newSceneName}");
+            yield return loadingScreenAnimator.HideLoadingScreen();
             yield break;
         }
 
@@ -138,6 +152,8 @@ public class SceneLoader : MonoBehaviour
         }
 
         Debug.Log($"Successfully loaded scene: {newSceneName}");
+        
+        yield return loadingScreenAnimator.HideLoadingScreen();
     }
 
     public string GetCurrentAdditiveScene()
