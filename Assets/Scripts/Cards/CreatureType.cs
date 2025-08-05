@@ -5,7 +5,7 @@ public enum CreatureType
     Witch,
     Demon,
     Werewolf,
-    Giant,
+    Ogre,
     Vampire,
     Abomination,
     Ghost,
