@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InitScript : MonoBehaviour
+public class PackOpener_InitScript : MonoBehaviour
 {
     // Configuration constants
     private const int PACK_COUNT = 3;                // Number of packs to generate

@@ -1,3 +1,5 @@
+using UnityEngine.SceneManagement;
+
 public class Rarity
 {
     public static Rarity RARITY1 = new Rarity("Common", 7);
