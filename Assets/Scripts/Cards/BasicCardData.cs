@@ -13,7 +13,7 @@ public class BasicCardData : CardData
     public static BasicCardData Witch = new BasicCardData(CreatureType.Witch,             0, 1, 0, 2, 2, 2, 0, 0, 3, 1);
     public static BasicCardData Demon = new BasicCardData(CreatureType.Demon,             1, 2, 3, 1, 2, 0, 0, 0, 1, 0.8f);
     public static BasicCardData Werewolf = new BasicCardData(CreatureType.Werewolf,       4, 2, 2, 1, 1, 0, 0, 0, 0, 0.4f);
-    public static BasicCardData Giant = new BasicCardData(CreatureType.Giant,             2, 4, 1, 1, 1, 0, 0, 0, 0, 0.2f);
+    public static BasicCardData Giant = new BasicCardData(CreatureType.Giant,             2, 5, 1, 1, 1, 0, 0, 0, 0, 0.2f);
     public static BasicCardData Vampire = new BasicCardData(CreatureType.Vampire,         1, 2, 1, 2, 1, 1, 0, 0, 2, 0.6f);
     public static BasicCardData Abomination = new BasicCardData(CreatureType.Abomination, 2, 3, 0, 0, 2, 2, 0, 0, 1, 0.8f);
     public static BasicCardData Ghost = new BasicCardData(CreatureType.Ghost,             0, 1, 1, 0, 3, 3, 0, 0, 2, 0.6f);
