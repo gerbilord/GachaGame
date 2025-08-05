@@ -2,12 +2,12 @@ public class Rarity
 {
     public static Rarity RARITY1 = new Rarity("Common", 7);
     public static Rarity RARITY2 = new Rarity("Uncommon", 14);
-    public static Rarity RARITY3 = new Rarity("Rare", 21);
-    public static Rarity RARITY4 = new Rarity("Epic", 28);
-    public static Rarity RARITY5 = new Rarity("Legendary", 35);
-    public static Rarity RARITY6 = new Rarity("Mythical", 42);
-    public static Rarity RARITY7 = new Rarity("Unheard of", 49);
-    public static Rarity RARITY8 = new Rarity("Literally hacking", 56);
+    public static Rarity RARITY3 = new Rarity("Rare", 20);
+    public static Rarity RARITY4 = new Rarity("Epic", 26);
+    public static Rarity RARITY5 = new Rarity("Legendary", 31);
+    public static Rarity RARITY6 = new Rarity("Mythical", 36);
+    public static Rarity RARITY7 = new Rarity("Unheard of", 44);
+    public static Rarity RARITY8 = new Rarity("Literally hacking", 48);
 
     public string rarityName { get; private set; }
     public int extraStats { get; private set; }

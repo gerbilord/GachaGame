@@ -8,7 +8,7 @@ public static class CardGenerator
     // Rarity constants
     private const int MIN_RARITY = 1;
     private const int MAX_RARITY = 8;
-    private const float RARITY_INCREASE_CHANCE = 0.2f;
+    private const float RARITY_INCREASE_CHANCE = 0.25f;
     
     // Special mechanics constants
     private const float NIGHTMARE_CHANCE = 0.01f;
