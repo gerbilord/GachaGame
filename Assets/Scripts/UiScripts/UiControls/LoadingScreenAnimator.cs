@@ -7,6 +7,7 @@ public class LoadingScreenAnimator : MonoBehaviour
     [SerializeField] private float slideAnimationDuration = 0.5f;
     [SerializeField] private AnimationCurve slideAnimationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField] private float screenPadding = 50f;
+    [SerializeField] private float pauseDuration = 1.0f;
     
     private GameObject loadingScreen;
     private RectTransform loadingScreenRect;
@@ -60,6 +61,8 @@ public class LoadingScreenAnimator : MonoBehaviour
         
         currentAnimation = StartCoroutine(AnimateLoadingScreen(startPos, endPos));
         yield return currentAnimation;
+        
+        yield return new WaitForSeconds(pauseDuration);
     }
     
     public IEnumerator HideLoadingScreen()
@@ -101,20 +104,5 @@ public class LoadingScreenAnimator : MonoBehaviour
         
         loadingScreenRect.anchoredPosition = endPosition;
         currentAnimation = null;
-    }
-    
-    public void SetAnimationDuration(float duration)
-    {
-        slideAnimationDuration = duration;
-    }
-    
-    public void SetAnimationCurve(AnimationCurve curve)
-    {
-        slideAnimationCurve = curve;
-    }
-    
-    public void SetScreenPadding(float padding)
-    {
-        screenPadding = padding;
     }
 }
