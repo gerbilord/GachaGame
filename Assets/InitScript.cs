@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class InitScript : MonoBehaviour
 {
+    // Configuration constants
+    private const int PACK_COUNT = 3;                // Number of packs to generate
+    private const int CARDS_PER_PACK = 7;            // Number of cards in each pack
+    private const int NUMBER_OF_CARDS_TO_GAURANTEE_UPGRADE = 2; // This many cards will be guaranteed to be of at least this rarity
+    private const int MIN_RARITY_FOR_GUARANTEED = 1;  // Minimum rarity level for guaranteed cards
+    
     public GameObject libraryGrid;
     public GameObject cardPrefab;
     
@@ -26,17 +32,16 @@ public class InitScript : MonoBehaviour
     
     void GenerateCards()
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < PACK_COUNT; i++)
         {
             int cardsGenerated = 1;
-            int maxCards = 7; // Maximum cards to generate
-            while (cardsGenerated <= maxCards)
+            while (cardsGenerated <= CARDS_PER_PACK)
             {
                 CardData card = CardGenerator.GenerateCard();
 
-                if (cardsGenerated > 5 && card.rarityLevel == 1)
+                if (cardsGenerated > CARDS_PER_PACK - NUMBER_OF_CARDS_TO_GAURANTEE_UPGRADE && card.rarityLevel == MIN_RARITY_FOR_GUARANTEED)
                 {
-                    continue; // Skip low rarity cards after 5 cards have been generated
+                    continue; // Skip low rarity cards after threshold
                 }
                 // Instantiate card prefab
                 GameObject cardObject = Instantiate(cardPrefab, libraryGrid.transform);
