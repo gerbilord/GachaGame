@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class CardDisplay : MonoBehaviour
 {
+    private CardData currentCardData;
     [Header("Text Elements")]
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI attackText;
@@ -22,8 +23,22 @@ public class CardDisplay : MonoBehaviour
     public List<GameObject> nightmareIndicators;
     public RawImage background;
 
+    [Header("Hover Info")]
+    public GameObject hoverInfoContainerPrefab;
+    public GameObject hoverInfoItemPrefab;
+    
+    void Start()
+    {
+        // Add hover handler if not present
+        if (GetComponent<CardHoverHandler>() == null)
+        {
+            gameObject.AddComponent<CardHoverHandler>();
+        }
+    }
+    
     public void SetCardData(CardData cardData)
     {
+        currentCardData = cardData;
         if (titleText != null)
             titleText.text = $"{(cardData.isNightmare ? "Nightmarish " : "")}" + $"{Rarity.GetRarity(cardData.rarityLevel).rarityName} " + $"{cardData.creatureType}";
 
@@ -112,5 +127,10 @@ public class CardDisplay : MonoBehaviour
             }
             background.color = rarityColor;
         }
+    }
+    
+    public CardData GetCardData()
+    {
+        return currentCardData;
     }
 }

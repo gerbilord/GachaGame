@@ -1327,6 +1327,8 @@ MonoBehaviour:
   - {fileID: 2994931291082968091}
   - {fileID: 4786799926224557208}
   background: {fileID: 6261544705059151482}
+  hoverInfoContainerPrefab: {fileID: 9045526764579881494, guid: 0abb32a7f6c868f4c9cc5e91627bff23, type: 3}
+  hoverInfoItemPrefab: {fileID: 8058799727800378288, guid: 13fa237a6853e43459219f60c0687a6c, type: 3}
 --- !u!1 &6770893307504493644
 GameObject:
   m_ObjectHideFlags: 0
