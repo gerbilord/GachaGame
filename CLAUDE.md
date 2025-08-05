@@ -4,8 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Unity Project Details
 - **Unity Version**: 2022.3.0f1 LTS
-- **Primary Scene**: Assets/Scenes/SampleScene.unity (configured in build settings)
 - **Platform**: PC/Mac Standalone
+- **Render Pipeline**: Built-in Render Pipeline
+- **UI System**: Unity UI (uGUI) with TextMeshPro
 
 ## Development Commands
 
@@ -14,7 +15,6 @@ Unity development is primarily done through the Unity Editor GUI. Key operations
 - **Open Project**: Launch Unity Hub and open the project folder
 - **Play Mode**: Press Play button in Unity Editor or Ctrl+P
 - **Build**: File → Build Settings → Build (or Ctrl+Shift+B)
-- **Scene Navigation**: File → Open Scene → Assets/Scenes/SampleScene.unity
 
 ### Code Compilation
 Unity automatically compiles C# scripts when:
@@ -23,81 +23,70 @@ Unity automatically compiles C# scripts when:
 - Manually triggered via Assets → Reimport All
 
 ### Testing
-No test framework is currently configured. To add tests:
-1. Window → General → Test Runner
-2. Create test assemblies in Assets/Tests/
-3. Use Unity Test Framework (already in packages)
+Unity Test Framework is included in packages. Test files exist at `Assets/Scripts/Tests/TestCardGeneration.cs`
 
 ## Architecture Overview
 
-### Card System
-The core game revolves around a card generation system with the following structure:
+### Scene Management System
+The game uses an additive scene loading architecture:
+- **Scene_Core**: Always loaded, contains SceneLoader singleton and Core_InitScript
+- **Scene_MainMenu**: Main menu with buttons for pack opening and quit
+- **Scene_PackOpener**: Pack opening interface (displays 3 packs of 7 cards each)
+- **Scene_CardLibrary**: Card library display (not yet implemented)
 
-**Data Model** (`Assets/Scripts/Cards/`):
-- `CardData.cs`: Base card structure with stats dictionary, creature type, and magic properties
-- `BasicCardData.cs`: Predefined card templates (12 types) with base stats
-- `CardGenerator.cs`: Fully implemented card generation with rarity-based stat scaling, special stat decay, and rare nightmare transformations
-- `StatUtils.cs`: Utility methods for stat validation and categorization
+Scene transitions use LoadingScreenAnimator with slide animations and configurable pause duration.
 
-**Enumerations**:
-- `CreatureType`: 12 types (Goblin, Fairy, Witch, Demon, etc.)
-- `Stat`: 9 stat types (Attack, HP, Armor, Resist, Special1-4, Mana)
-- `Rarity`: 8 tiers from Common to "Literally hacking"
+### Card System Architecture
 
-### UI System
-**Highlighter Framework** (`Assets/Scripts/UiScripts/Highlighter/`):
-- `IHighlighter`: Interface for consistent highlighting behavior
-- `Highlighter2D`: UI element highlighting using overlay images
-- `Highlighter3D`: 3D object highlighting using emission materials
-- `HighlighterUtils`: Static utility methods for highlighting operations
+**Core Components** (`Assets/Scripts/Cards/`):
+- `CardData`: Main data container with stats dictionary, creature type, magic/nightmare flags, and rarity level
+- `BasicCardData`: 12 predefined card templates with base stats and magic chances
+- `CardGenerator`: Static class implementing the card generation algorithm with rarity scaling
+- `Rarity`: Encapsulates rarity levels (1-8) with associated extra stat points (0-49)
+- `StatUtils`: Helper methods for stat categorization (special vs non-special stats)
 
-**Card Display** (`Assets/Scripts/UiScripts/`):
-- `CardDisplay.cs`: MonoBehaviour for displaying card data with TextMeshPro elements, handles nightmare/magic indicators and rarity-based background colors
+**Card Generation Algorithm**:
+1. Start at rarity 1, 25% chance to increase each level (up to 8)
+2. Assign extra stats based on rarity (7 points per rarity level above 1)
+3. Apply special stat decay (25% for Special1, 50% for Special2)
+4. 1% chance for nightmare transformation (transfers Armor/Resist to Special3/Special4)
+5. Stat distribution weights: Attack/HP (25% each), Special1/2 (12.5% each), Mana/Armor/Resist (~8.3% each)
 
-### Project Structure
-```
-Assets/
-├── Art/              # Card templates (PNG/PSD), UI elements
-├── Scenes/           #  SampleScene.unity (main scene),
-├── Scripts/
-│   ├── Cards/        # Card system implementation
-│   ├── Globals/      # Utility classes (AsyncUtils)
-│   └── UiScripts/    # UI components and highlighters
-├── InitScript.cs     # Scene initialization, generates 100 cards on Start
-├── Resources/
-│   └── Prefabs/      # CardPrefab.prefab - card UI template
-└── Packages/         # Unity Test Framework included
-```
+### UI System Components
 
-## Key Implementation Details
+**Card Display System**:
+- `CardDisplay`: MonoBehaviour that renders card data using TextMeshPro components
+- Dynamically sets background color based on rarity
+- Shows/hides magic and nightmare indicators
+- Updates all stat text fields
 
-1. **Card Generation Algorithm**:
-   - Base rarity starts at 1, increases with 20% chance per level (up to 8)
-   - Each rarity level adds 7 stat points distributed randomly
-   - Special stats capped at 5 points max
-   - 25% chance Special1 decays, 50% chance Special2 decays (redistributed to other stats)
-   - 1% chance for nightmare transformation (Armor/Resist → Special3/Special4)
+**Scene Control**:
+- `SceneLoader`: Singleton managing additive scene loading/unloading
+- `LoadingScreenAnimator`: Handles loading screen slide animations
+- Main menu navigation using Unity Events on Button components
+- ESC key returns to main menu from pack opener
 
-2. **Scene Initialization**: 
-   - `InitScript.cs` attached to GameObject in scene
-   - Generates 100 cards on Start using `CardGenerator.GenerateCard()`
-   - Instantiates `CardPrefab` from Resources/Prefabs/ into libraryGrid
+**Highlighter Framework** (prepared for future use):
+- `IHighlighter`: Interface for unified highlighting behavior
+- `Highlighter2D/3D`: Implementations for UI and 3D object highlighting
+- Currently not integrated with card display system
 
-3. **Card Display Colors by Rarity**:
-   - Common (1): Black
-   - Uncommon (2): Gray  
-   - Rare (3): Dark Blue
-   - Epic (4): Purple
-   - Legendary (5): Red
-   - Mythic (6): Orange
-   - Divine (7): Gold
-   - "Literally hacking" (8): Cyan
+### Key Input Controls
+- **R Key**: Regenerate all cards (in PackOpener scene)
+- **ESC Key**: Return to main menu (from PackOpener scene)
+- **Unity Editor**: Ctrl+P for Play Mode, Ctrl+Shift+B for Build
 
-4. **IDE Integration**: Project is configured for JetBrains Rider, Visual Studio, and VSCode. Unity automatically generates .csproj files.
+## Build Configuration
+Enabled scenes in build order:
+1. Scene_Core (always loaded first)
+2. Scene_CardLibrary
+3. Scene_MainMenu  
+4. Scene_PackOpener
 
-## Current Limitations & Missing Features
-- Pack opening logic and animations not yet implemented
-- No persistent game state or save/load system
-- Card collection/inventory management not implemented
-- Audio system not configured
-- PackOpener.unity scene needs setup
+Note: Legacy "PackOpener.unity" is disabled in build settings.
+
+## Project Dependencies
+- TextMeshPro (for UI text rendering)
+- Unity UI package (uGUI system)
+- Unity Test Framework (for unit testing)
+- IDE support packages (Rider, Visual Studio, VSCode)
