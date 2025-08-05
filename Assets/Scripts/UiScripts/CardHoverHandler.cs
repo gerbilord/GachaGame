@@ -9,8 +9,6 @@ public class CardHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExi
     private GameObject infoCardPrefab;
     
     private GameObject hoverInfoContainerInstance;
-    private GameObject special1InfoCard;
-    private GameObject special2InfoCard;
     
     void Start()
     {
@@ -67,7 +65,7 @@ public class CardHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExi
                 Vector3 rightEdgePos = (cardCorners[2] + cardCorners[3]) / 2f;
                 
                 // Convert to local position in parent canvas
-                containerRect.position = rightEdgePos + new Vector3(10, 0, 0);
+                containerRect.position = rightEdgePos + new Vector3(15, 110, 0);
             }
         }
         
@@ -80,13 +78,34 @@ public class CardHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExi
             Destroy(child.gameObject);
         }
         
-        // Create Special1 info card
-        special1InfoCard = Instantiate(infoCardPrefab, hoverInfoContainerInstance.transform);
-        SetupInfoCard(special1InfoCard, "Special 1", cardData.stats[Stat.Special1].ToString());
+        // Create info cards for each special that exists
+        if (cardData.special1 != null && cardData.stats[Stat.Special1] > 0)
+        {
+            GameObject special1InfoCard = Instantiate(infoCardPrefab, hoverInfoContainerInstance.transform);
+            string special1Text = FormatSpecialText(cardData.special1, cardData.stats[Stat.Special1]);
+            SetupInfoCard(special1InfoCard, special1Text);
+        }
         
-        // Create Special2 info card
-        special2InfoCard = Instantiate(infoCardPrefab, hoverInfoContainerInstance.transform);
-        SetupInfoCard(special2InfoCard, "Special 2", cardData.stats[Stat.Special2].ToString());
+        if (cardData.special2 != null && cardData.stats[Stat.Special2] > 0)
+        {
+            GameObject special2InfoCard = Instantiate(infoCardPrefab, hoverInfoContainerInstance.transform);
+            string special2Text = FormatSpecialText(cardData.special2, cardData.stats[Stat.Special2]);
+            SetupInfoCard(special2InfoCard, special2Text);
+        }
+        
+        if (cardData.special3 != null && cardData.stats[Stat.Special3] > 0)
+        {
+            GameObject special3InfoCard = Instantiate(infoCardPrefab, hoverInfoContainerInstance.transform);
+            string special3Text = FormatSpecialText(cardData.special3, cardData.stats[Stat.Special3]);
+            SetupInfoCard(special3InfoCard, special3Text);
+        }
+        
+        if (cardData.special4 != null && cardData.stats[Stat.Special4] > 0)
+        {
+            GameObject special4InfoCard = Instantiate(infoCardPrefab, hoverInfoContainerInstance.transform);
+            string special4Text = FormatSpecialText(cardData.special4, cardData.stats[Stat.Special4]);
+            SetupInfoCard(special4InfoCard, special4Text);
+        }
     }
     
     public void OnPointerExit(PointerEventData eventData)
@@ -97,19 +116,18 @@ public class CardHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExi
         }
     }
     
-    private void SetupInfoCard(GameObject infoCard, string title, string value)
+    private void SetupInfoCard(GameObject infoCard, string value)
     {
         // Find text components in the info card
         TextMeshProUGUI[] texts = infoCard.GetComponentsInChildren<TextMeshProUGUI>();
         
-        if (texts.Length >= 2)
-        {
-            texts[0].text = title;
-            texts[1].text = value;
-        }
-        else if (texts.Length == 1)
-        {
-            texts[0].text = $"{title}: {value}";
-        }
+        texts[0].text = $"{value}";
+    }
+    
+    private string FormatSpecialText(Special special, int level)
+    {
+        int manaCost = special.manaMultiplier * level;
+        string manaText = manaCost > 0 ? $" - {manaCost} Mana" : "";
+        return $"{special.name} \n (Lv.{level}){manaText}\n\n{special.description}";
     }
 }

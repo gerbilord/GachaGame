@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -55,8 +56,67 @@ public static class CardGenerator
         GiveExtraStatsBasedForRarity(rarityLevel, newCard);
         ChanceApplySpecialDecay(newCard);
         ChanceMakeNightmare(newCard);
+        GiveRandomSpecials(newCard);
 
         return newCard;
+    }
+
+    private static void GiveRandomSpecials(CardData newCard)
+    {
+        List<Special> usedSpecials = new List<Special>();
+        
+        // Get the special categories for this creature type
+        List<SpecialCategory> creatureCategories = newCard.creatureType.SpecialCategories;
+        
+        // Special1 - Filter specials that match creature type categories
+        var special1Options = Special.AllSpecials
+            .Where(s => creatureCategories.Contains(s.category))
+            .Where(s => !usedSpecials.Contains(s))
+            .ToList();
+            
+        if (special1Options.Count > 0 && newCard.stats[Stat.Special1] > 0)
+        {
+            newCard.special1 = special1Options[Random.Range(0, special1Options.Count)];
+            usedSpecials.Add(newCard.special1);
+        }
+        
+        // Special2 - Filter specials that match creature type categories
+        var special2Options = Special.AllSpecials
+            .Where(s => creatureCategories.Contains(s.category))
+            .Where(s => !usedSpecials.Contains(s))
+            .ToList();
+            
+        if (special2Options.Count > 0 && newCard.stats[Stat.Special2] > 0)
+        {
+            newCard.special2 = special2Options[Random.Range(0, special2Options.Count)];
+            usedSpecials.Add(newCard.special2);
+        }
+        
+        // For nightmare cards, Special3 and Special4 can be any special
+        if (newCard.isNightmare)
+        {
+            // Special3 - Any special not already used
+            var special3Options = Special.AllSpecials
+                .Where(s => !usedSpecials.Contains(s))
+                .ToList();
+                
+            if (special3Options.Count > 0 && newCard.stats[Stat.Special3] > 0)
+            {
+                newCard.special3 = special3Options[Random.Range(0, special3Options.Count)];
+                usedSpecials.Add(newCard.special3);
+            }
+            
+            // Special4 - Any special not already used
+            var special4Options = Special.AllSpecials
+                .Where(s => !usedSpecials.Contains(s))
+                .ToList();
+                
+            if (special4Options.Count > 0 && newCard.stats[Stat.Special4] > 0)
+            {
+                newCard.special4 = special4Options[Random.Range(0, special4Options.Count)];
+                usedSpecials.Add(newCard.special4);
+            }
+        }
     }
 
     private static void ChanceMakeNightmare(CardData card)
