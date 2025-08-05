@@ -399,7 +399,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1584500733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -460,8 +460,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1948158631}
   - component: {fileID: 1948158630}
-  - component: {fileID: 1948158632}
   - component: {fileID: 1948158633}
+  - component: {fileID: 1948158634}
   m_Layer: 0
   m_Name: Engine
   m_TagString: Untagged
@@ -481,7 +481,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d31708dc0a744a4bb8fe8567fedcd7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoadFirst: 3
+  sceneToLoadFirst: 1
 --- !u!4 &1948158631
 Transform:
   m_ObjectHideFlags: 0
@@ -497,23 +497,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1948158632
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1948158629}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9309bb7e02d98274bb86fb82de78528e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneCoreReference: Scene_Core
-  sceneMainMenuReference: Scene_MainMenu
-  sceneCardLibraryReference: Scene_CardLibrary
-  scenePackOpenerReference: Scene_PackOpener
-  loadingScreen: {fileID: 1568480886}
 --- !u!114 &1948158633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -553,6 +536,23 @@ MonoBehaviour:
     m_RotationOrder: 4
   screenPadding: 50
   pauseDuration: 1
+--- !u!114 &1948158634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948158629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9309bb7e02d98274bb86fb82de78528e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneCoreReference: Scene_Core
+  sceneMainMenuReference: Scene_MainMenu
+  sceneCardLibraryReference: Scene_CardLibrary
+  scenePackOpenerReference: Scene_PackOpener
+  loadingScreen: {fileID: 1568480886}
 --- !u!1 &1977464223
 GameObject:
   m_ObjectHideFlags: 0
