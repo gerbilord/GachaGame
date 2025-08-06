@@ -138,6 +138,6 @@ public class CardHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExi
     {
         int manaCost = special.manaMultiplier * level;
         string manaText = manaCost > 0 ? $" - {manaCost} Mana" : "";
-        return $"{special.name} \n (Lv.{level}){manaText}\n\n{special.description}";
+        return $"{special.name} \n (Lv.{level}){manaText}\n\n{special.description.Replace("(X)",$"({level})")}";
     }
 }
