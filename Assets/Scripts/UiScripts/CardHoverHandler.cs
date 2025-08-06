@@ -20,6 +20,16 @@ public class CardHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExi
         }
     }
     
+    void OnDestroy()
+    {
+        // Clean up the hover info container if it exists
+        if (hoverInfoContainerInstance != null)
+        {
+            Destroy(hoverInfoContainerInstance);
+            hoverInfoContainerInstance = null;
+        }
+    }
+    
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (hoverInfoContainerPrefab == null || infoCardPrefab == null || cardDisplay == null) return;
